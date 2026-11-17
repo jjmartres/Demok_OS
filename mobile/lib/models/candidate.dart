@@ -42,29 +42,41 @@ class Candidate {
       return partyLogoUrl;
     }
 
+    final normalized = party
+        .toLowerCase()
+        .replaceAll('é', 'e')
+        .replaceAll('è', 'e')
+        .replaceAll('ê', 'e')
+        .replaceAll('ë', 'e')
+        .replaceAll('à', 'a')
+        .trim();
+
     final Map<String, String> partyLogos = {
-      "L'Après / Divers Gauche": 'assets/images/logos_partis/l_apres.svg',
-      "Parti Socialiste": 'assets/images/logos_partis/Parti_Socialiste_logo.png',
-      "Nouvelle Énergie / LR": 'assets/images/logos_partis/nouvelle_energie.svg',
-      "Debout !": 'assets/images/logos_partis/debout.png',
-      "Horizons": 'assets/images/logos_partis/horizons.svg',
-      "Les Écologistes": 'assets/images/logos_partis/les_ecologistes.svg',
-      "Les Républicains": 'assets/images/logos_partis/les_republicains.svg',
-      "Rassemblement National": 'assets/images/logos_partis/Rassemblement_National_logo.svg',
-      "La France Insoumise": 'assets/images/logos_partis/La_France_Insoumise_logo.png',
-      "Parti Communiste Français": 'assets/images/logos_partis/parti_communiste_francais.png',
-      "La France Humaniste": 'assets/images/logos_partis/la_france_humaniste.png',
-      "Lutte Ouvrière": 'assets/images/logos_partis/Lutte_Ouvriere_logo.svg',
-      "Place Publique": 'assets/images/logos_partis/Place_Publique_logo.png',
-      "Renaissance": 'assets/images/logos_partis/Renaissance_logo.svg',
-      "Debout la France": 'assets/images/logos_partis/Debout_la_France_logo.png',
-      "Reconquête !": 'assets/images/logos_partis/Reconquete_logo.svg',
-      "Nouveau Parti Anticapitaliste": 'assets/images/logos_partis/Nouveau_Parti_Anticapitaliste_logo.png',
-      "Révolution Permanente": 'assets/images/logos_partis/Revolution_Permanente_logo.svg',
-      "Union populaire républicaine": 'assets/images/logos_partis/Union_Populaire_Republicaine_logo.jpg',
+      "l'apres / divers gauche": 'assets/images/logos_partis/l_apres.svg',
+      "l'apres": 'assets/images/logos_partis/l_apres.svg',
+      "parti socialiste": 'assets/images/logos_partis/Parti_Socialiste_logo.png',
+      "nouvelle energie / lr": 'assets/images/logos_partis/nouvelle_energie.svg',
+      "nouvelle energie": 'assets/images/logos_partis/nouvelle_energie.svg',
+      "debout !": 'assets/images/logos_partis/debout.png',
+      "horizons": 'assets/images/logos_partis/horizons.svg',
+      "les ecologistes": 'assets/images/logos_partis/les_ecologistes.svg',
+      "les republicains": 'assets/images/logos_partis/les_republicains.svg',
+      "rassemblement national": 'assets/images/logos_partis/Rassemblement_National_logo.svg',
+      "la france insoumise": 'assets/images/logos_partis/La_France_Insoumise_logo.png',
+      "parti communiste francais": 'assets/images/logos_partis/parti_communiste_francais.png',
+      "la france humaniste": 'assets/images/logos_partis/la_france_humaniste.png',
+      "lutte ouvriere": 'assets/images/logos_partis/Lutte_Ouvriere_logo.svg',
+      "place publique": 'assets/images/logos_partis/Place_Publique_logo.png',
+      "renaissance": 'assets/images/logos_partis/Renaissance_logo.svg',
+      "debout la france": 'assets/images/logos_partis/Debout_la_France_logo.png',
+      "reconquete !": 'assets/images/logos_partis/Reconquete_logo.svg',
+      "reconquete": 'assets/images/logos_partis/Reconquete_logo.svg',
+      "nouveau parti anticapitaliste": 'assets/images/logos_partis/Nouveau_Parti_Anticapitaliste_logo.png',
+      "revolution permanente": 'assets/images/logos_partis/Revolution_Permanente_logo.svg',
+      "union populaire republicaine": 'assets/images/logos_partis/Union_Populaire_Republicaine_logo.jpg',
     };
 
-    return partyLogos[party];
+    return partyLogos[normalized];
   }
 
   bool get isSvgLogo => logoPath?.endsWith('.svg') ?? false;

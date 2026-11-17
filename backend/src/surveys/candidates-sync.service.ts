@@ -96,8 +96,12 @@ export class CandidatesSyncService {
                     }
 
                     let photoUrl: string | null = null;
-                    if (photo && photo.startsWith('/')) {
-                        photoUrl = `${this.SITE_BASE_URL}${photo}`;
+                    if (photo && photo.startsWith('/photos/')) {
+                        const filename = photo.replace('/photos/', '');
+                        photoUrl = `https://raw.githubusercontent.com/maximerat/politchique/main/public/photos/${filename}`;
+                    } else if (photo && photo.startsWith('/')) {
+                        const filename = photo.replace('/', '');
+                        photoUrl = `https://raw.githubusercontent.com/maximerat/politchique/main/public/${filename}`;
                     } else if (photoSource && (photoSource.startsWith('http://') || photoSource.startsWith('https://'))) {
                         photoUrl = photoSource;
                     }
