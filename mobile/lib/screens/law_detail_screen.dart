@@ -260,43 +260,52 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
       child: Stack(
         children: [
           Scaffold(
-            backgroundColor: Colors.white,
+            backgroundColor: AppColors.scaffoldBackground,
 
             appBar: AppBar(
-              backgroundColor: Colors.white,
+              backgroundColor: AppColors.surface,
               elevation: 0,
-              leading: BackButton(
-                onPressed: () => Navigator.pop(context, _hasVoted),
+              toolbarHeight: 64,
+              leadingWidth: 56,
+              leading: Center(
+                child: _buildTopIconButton(
+                  icon: Icons.arrow_back_rounded,
+                  onTap: () => Navigator.pop(context, _hasVoted),
+                  tooltip: 'Retour',
+                ),
               ),
-              iconTheme: const IconThemeData(color: Colors.black),
               actions: [
-                IconButton(
-                  icon: Icon(
-                    widget.law.isFavorited ? Icons.star : Icons.star_border,
-                    color: widget.law.isFavorited ? Colors.amber[600] : Colors.grey[400],
+                Center(
+                  child: _buildTopIconButton(
+                    icon: widget.law.isFavorited ? Icons.star_rounded : Icons.star_outline_rounded,
+                    color: widget.law.isFavorited ? const Color(0xFFF59E0B) : AppColors.textSecondary,
+                    tooltip: 'Mettre en favori',
+                    onTap: _toggleFavorite,
                   ),
-                  tooltip: 'Mettre en favori',
-                  onPressed: _toggleFavorite,
                 ),
-
-                IconButton(
-                  icon: const Icon(Icons.outlined_flag, color: Colors.grey),
-                  tooltip: 'Signaler une erreur',
-                  onPressed: () async {
-                    final result = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => ReportErrorDialog(lawId: widget.law.id),
-                    );
-                    if (result == true && mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Merci ! Votre signalement a bien été envoyé.'),
-                          backgroundColor: Colors.green,
-                        ),
+                const SizedBox(width: 8),
+                Center(
+                  child: _buildTopIconButton(
+                    icon: Icons.outlined_flag_rounded,
+                    color: AppColors.textSecondary,
+                    tooltip: 'Signaler une erreur',
+                    onTap: () async {
+                      final result = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => ReportErrorDialog(lawId: widget.law.id),
                       );
-                    }
-                  },
+                      if (result == true && mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Merci ! Votre signalement a bien été envoyé.'),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                      }
+                    },
+                  ),
                 ),
+                const SizedBox(width: 16),
               ],
             ),
             body: Column(
@@ -304,7 +313,7 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                 Expanded(
                   child: SingleChildScrollView(
                     controller: _scrollController,
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -312,27 +321,30 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                         Text(
                           widget.law.formattedTitleFor(streetMode: _isStreetMode && widget.law.summaryStreet != null),
                           style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.4,
+                            height: 1.28,
+                            color: AppColors.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
 
 
                         // Résultats du vote des députés AVANT le parcours législatif pour visibilité immédiate
                         if (widget.law.isPromulgated) ...[
                           Container(
-                            padding: const EdgeInsets.all(12),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                             decoration: BoxDecoration(
-                              color: Colors.teal.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.teal),
+                              color: const Color(0xFFECFDF5),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: const Color(0xFFA7F3D0)),
                             ),
                             child: Row(
                               children: [
-                                const Icon(Icons.verified, color: Colors.teal),
-                                const SizedBox(width: 8),
-                                Expanded(child: Text("Loi promulguée le ${widget.law.datePromulgation!.day.toString().padLeft(2, '0')}/${widget.law.datePromulgation!.month.toString().padLeft(2, '0')}/${widget.law.datePromulgation!.year}", style: const TextStyle(color: Colors.teal, fontWeight: FontWeight.bold))),
+                                const Icon(Icons.verified_rounded, color: Color(0xFF047857), size: 20),
+                                const SizedBox(width: 10),
+                                Expanded(child: Text("Loi promulguée le ${widget.law.datePromulgation!.day.toString().padLeft(2, '0')}/${widget.law.datePromulgation!.month.toString().padLeft(2, '0')}/${widget.law.datePromulgation!.year}", style: const TextStyle(color: Color(0xFF047857), fontWeight: FontWeight.w600, fontSize: 13.5))),
                               ],
                             ),
                           ),
@@ -340,17 +352,17 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                         ] else if (widget.law.deputyVoteResult != null) ...[
                           if (widget.law.deputyVoteResult!.isSimplified == true) ...[
                             Container(
-                              padding: const EdgeInsets.all(12),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                               decoration: BoxDecoration(
-                                color: Colors.blue.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: Colors.blue),
+                                color: const Color(0xFFEFF6FF),
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(color: const Color(0xFFBFDBFE)),
                               ),
                               child: Row(
                                 children: const [
-                                  Icon(Icons.info_outline, color: Colors.blue),
-                                  SizedBox(width: 8),
-                                  Expanded(child: Text("Texte adopté par procédure simplifiée (sans scrutin public)", style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold))),
+                                  Icon(Icons.info_outline_rounded, color: Color(0xFF1D4ED8), size: 20),
+                                  SizedBox(width: 10),
+                                  Expanded(child: Text("Texte adopté par procédure simplifiée (sans scrutin public)", style: TextStyle(color: Color(0xFF1D4ED8), fontWeight: FontWeight.w600, fontSize: 13.5))),
                                 ],
                               ),
                             ),
@@ -365,17 +377,17 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                                    ((widget.law.voteDate ?? widget.law.agendaDate) != null && 
                                     DateTime((widget.law.voteDate ?? widget.law.agendaDate)!.year, (widget.law.voteDate ?? widget.law.agendaDate)!.month, (widget.law.voteDate ?? widget.law.agendaDate)!.day).isBefore(DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)))) ...[
                            Container(
-                            padding: const EdgeInsets.all(12),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                             decoration: BoxDecoration(
-                              color: Colors.orange.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.orange),
+                              color: const Color(0xFFFFFBEB),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: const Color(0xFFFDE68A)),
                             ),
                             child: Row(
                               children: const [
-                                Icon(Icons.info_outline, color: Colors.orange),
-                                SizedBox(width: 8),
-                                Expanded(child: Text("Résultats du vote en attente de publication officielle", style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold))),
+                                Icon(Icons.info_outline_rounded, color: Color(0xFFB45309), size: 20),
+                                SizedBox(width: 10),
+                                Expanded(child: Text("Résultats du vote en attente de publication officielle", style: TextStyle(color: Color(0xFFB45309), fontWeight: FontWeight.w600, fontSize: 13.5))),
                               ],
                             ),
                           ),
@@ -421,6 +433,30 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
               onComplete: _onXpNotificationComplete,
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTopIconButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    String? tooltip,
+    Color? color,
+  }) {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: BoxDecoration(
+        color: AppColors.pillBackground,
+        shape: BoxShape.circle,
+        border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+      ),
+      child: IconButton(
+        icon: Icon(icon, size: 20, color: color ?? AppColors.textPrimary),
+        onPressed: onTap,
+        tooltip: tooltip,
+        padding: EdgeInsets.zero,
+        splashRadius: 20,
       ),
     );
   }
@@ -480,8 +516,9 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: cardBg,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: borderColor),
+        boxShadow: AppColors.cardShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -639,14 +676,8 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.grey[300]!),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        border: Border.all(color: AppColors.cardBorderSubtle),
+        boxShadow: AppColors.softShadow,
       ),
       padding: const EdgeInsets.all(3),
       child: Row(
@@ -680,17 +711,26 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
       borderRadius: BorderRadius.circular(20),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
         decoration: BoxDecoration(
           color: isSelected ? activeColor : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: activeColor.withValues(alpha: 0.25),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: Text(
           title,
           style: TextStyle(
             fontSize: 13,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? Colors.white : Colors.grey[700],
+            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+            color: isSelected ? Colors.white : AppColors.textSecondary,
           ),
         ),
       ),
@@ -703,15 +743,9 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+        boxShadow: AppColors.cardShadow,
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -724,7 +758,7 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
           initiallyExpanded: false,
           title: Row(
             children: [
-              const Icon(Icons.poll_outlined, color: AppColors.primaryBlue, size: 20),
+              const Icon(Icons.bar_chart_rounded, color: AppColors.primaryBlue, size: 20),
               const SizedBox(width: 8),
               const Expanded(
                 child: Text(
@@ -785,22 +819,22 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                 }
 
                 return Container(
-                  margin: const EdgeInsets.only(top: 24),
+                  margin: const EdgeInsets.only(top: 20),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   decoration: BoxDecoration(
                     color: bgCol,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: textCol.withValues(alpha: 0.3)),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: textCol.withValues(alpha: 0.25)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(icon, size: 20, color: textCol),
+                      Icon(icon, size: 18, color: textCol),
                       const SizedBox(width: 8),
                       Text(
                         label,
                         style: TextStyle(
-                          fontSize: 15,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: textCol,
                         ),
@@ -838,14 +872,14 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                       _isModifyingVote = true;
                     });
                   },
-                  icon: const Icon(Icons.edit, size: 18),
+                  icon: const Icon(Icons.edit_outlined, size: 18),
                   label: const Text('Modifier mon vote'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.primaryBlue,
-                    side: const BorderSide(color: AppColors.primaryBlue),
+                    side: const BorderSide(color: AppColors.cardBorder),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                 ),
@@ -922,27 +956,24 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
 
   Widget _buildVotingButtons() {
     return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 10,
-              offset: const Offset(0, -2),
-            ),
-          ],
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: const Border(
+          top: BorderSide(color: AppColors.cardBorderSubtle, width: 1),
         ),
-        child: Row(
-          children: [
-            _buildLawChoiceButton('FOR', 'Pour', AppColors.votePour, Icons.thumb_up_rounded),
-            const SizedBox(width: 8),
-            _buildLawChoiceButton('ABSTAIN', 'Neutre', AppColors.voteAbstention, Icons.remove_circle_outline_rounded),
-            const SizedBox(width: 8),
-            _buildLawChoiceButton('AGAINST', 'Contre', AppColors.voteContre, Icons.thumb_down_rounded),
-          ],
-        ),
-      );
+        boxShadow: AppColors.elevatedShadow,
+      ),
+      child: Row(
+        children: [
+          _buildLawChoiceButton('FOR', 'Pour', AppColors.votePour, Icons.thumb_up_rounded),
+          const SizedBox(width: 10),
+          _buildLawChoiceButton('ABSTAIN', 'Neutre', AppColors.voteAbstention, Icons.remove_circle_outline_rounded),
+          const SizedBox(width: 10),
+          _buildLawChoiceButton('AGAINST', 'Contre', AppColors.voteContre, Icons.thumb_down_rounded),
+        ],
+      ),
+    );
   }
 
   Widget _buildLawChoiceButton(String choice, String label, Color color, IconData icon) {
@@ -951,18 +982,26 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
         onTap: () => _castVote(choice),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(vertical: 13),
           decoration: BoxDecoration(
-            color: color.withAlpha(25),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: color.withAlpha(100)),
+            color: color.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: color.withValues(alpha: 0.35), width: 1.2),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, color: color, size: 22),
-              const SizedBox(height: 4),
-              Text(label, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13)),
+              const SizedBox(height: 5),
+              Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  letterSpacing: 0.1,
+                ),
+              ),
             ],
           ),
         ),
@@ -1027,11 +1066,9 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 4, offset: const Offset(0, 2)),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+        boxShadow: AppColors.cardShadow,
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -1041,25 +1078,25 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
           initiallyExpanded: false,
           title: Row(
             children: [
-              const Icon(Icons.edit_note, color: AppColors.primaryBlue, size: 20),
+              const Icon(Icons.edit_note_rounded, color: AppColors.primaryBlue, size: 22),
             const SizedBox(width: 8),
             const Text('Amendements',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.darkBlue)),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.darkBlue)),
             const SizedBox(width: 8),
             GestureDetector(
               onTap: () => _showAmendementStatusInfo(context),
-              child: const Icon(Icons.info_outline, color: Colors.grey, size: 20),
+              child: const Icon(Icons.info_outline_rounded, color: AppColors.textSecondary, size: 18),
             ),
             const Spacer(),
             if (total > 0)
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                 decoration: BoxDecoration(
                   color: AppColors.primaryBlue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text('$total',
-                  style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
+                  style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.bold, color: AppColors.primaryBlue)),
               ),
           ],
         ),
@@ -1271,15 +1308,9 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+        boxShadow: AppColors.cardShadow,
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -1288,7 +1319,7 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
           collapsedShape: const Border(),
           title: Row(
             children: [
-              const Icon(Icons.account_balance, color: AppColors.primaryBlue, size: 20),
+              const Icon(Icons.account_balance_outlined, color: AppColors.primaryBlue, size: 20),
               const SizedBox(width: 8),
             const Expanded(
               child: Text(
@@ -1370,14 +1401,17 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
   }
 
   Widget _buildDeputyVoteResultSection(DeputyVoteResult result) {
+    final isAdopted = result.adopted;
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: result.adopted ? const Color(0xFFE8F5E9) : const Color(0xFFFFEBEE),
-        borderRadius: BorderRadius.circular(10),
+        color: isAdopted ? const Color(0xFFF0FDF4) : const Color(0xFFFEF2F2),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: result.adopted ? const Color(0xFF2E7D32) : const Color(0xFFC62828),
+          color: isAdopted ? const Color(0xFFBBF7D0) : const Color(0xFFFECACA),
+          width: 1,
         ),
+        boxShadow: AppColors.softShadow,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1385,43 +1419,43 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
           Row(
             children: [
               Icon(
-                result.adopted ? Icons.how_to_vote : Icons.cancel_outlined,
+                isAdopted ? Icons.how_to_vote_rounded : Icons.cancel_rounded,
                 size: 18,
-                color: result.adopted ? const Color(0xFF2E7D32) : const Color(0xFFC62828),
+                color: isAdopted ? const Color(0xFF15803D) : const Color(0xFFB91C1C),
               ),
               const SizedBox(width: 6),
               Text(
-                result.adopted ? 'Adoptée par l\'AN' : 'Rejetée par l\'AN',
+                isAdopted ? 'Adoptée par l\'AN' : 'Rejetée par l\'AN',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: result.adopted ? const Color(0xFF2E7D32) : const Color(0xFFC62828),
+                  fontSize: 13.5,
+                  color: isAdopted ? const Color(0xFF15803D) : const Color(0xFFB91C1C),
                 ),
               ),
               const Spacer(),
               Text(
                 '${result.total} votants',
-                style: const TextStyle(fontSize: 11, color: Colors.grey),
+                style: const TextStyle(fontSize: 11.5, color: AppColors.textSecondary, fontWeight: FontWeight.w500),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
           if (result.isSimplified)
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 4),
               child: Text(
                 "Adopté sans scrutin public (procédure d'examen simplifiée). Les votes individuels ne sont pas enregistrés électroniquement.",
-                style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.black54),
+                style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: AppColors.textSecondary),
               ),
             )
           else
             Row(
               children: [
-                _buildDeputyVoteBar('Pour', result.pour, result.total, const Color(0xFF2E7D32)),
+                _buildDeputyVoteBar('Pour', result.pour, result.total, const Color(0xFF15803D)),
                 const SizedBox(width: 8),
-                _buildDeputyVoteBar('Contre', result.contre, result.total, const Color(0xFFC62828)),
+                _buildDeputyVoteBar('Contre', result.contre, result.total, const Color(0xFFB91C1C)),
                 const SizedBox(width: 8),
-                _buildDeputyVoteBar('Abst.', result.abstention, result.total, Colors.grey),
+                _buildDeputyVoteBar('Abst.', result.abstention, result.total, const Color(0xFF64748B)),
               ],
             ),
         ],

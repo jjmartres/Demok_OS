@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'dart:async';
 import 'dart:convert';
 import '../theme/app_colors.dart';
+import '../theme/app_theme.dart';
 import '../services/user_session.dart';
 import '../models/law.dart';
 import '../widgets/law_card.dart';
@@ -297,6 +298,34 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
     }
   }
 
+  Widget _buildTopIconButton({
+    required Widget icon,
+    required VoidCallback onPressed,
+    String? tooltip,
+    Color? backgroundColor,
+    Color? borderColor,
+  }) {
+    return Container(
+      width: 38,
+      height: 38,
+      decoration: BoxDecoration(
+        color: backgroundColor ?? AppColors.pillBackground,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: borderColor ?? AppColors.cardBorderSubtle,
+          width: 1,
+        ),
+      ),
+      child: IconButton(
+        icon: icon,
+        tooltip: tooltip,
+        onPressed: onPressed,
+        padding: EdgeInsets.zero,
+        splashRadius: 20,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final displayedLaws = _laws.where((l) {
@@ -313,59 +342,67 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
 
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
         elevation: 0,
+        scrolledUnderElevation: 0,
+        backgroundColor: AppColors.white,
         automaticallyImplyLeading: false,
-        toolbarHeight: 100, // Increased height for larger logo
+        toolbarHeight: 64,
         title: SvgPicture.asset(
           'assets/images/logo_demok_vf.svg',
-          height: 80,
+          height: 40,
           fit: BoxFit.contain,
         ),
         centerTitle: true,
-        leadingWidth: 110, // Adjusted for two icons
+        leadingWidth: 104,
         leading: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            const SizedBox(width: 12),
+            _buildTopIconButton(
+              tooltip: 'Composition du gouvernement',
+              icon: const Icon(Icons.account_balance_outlined, size: 19, color: AppColors.darkBlue),
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  builder: (context) => const GovernmentModal(),
+                );
+              },
+            ),
             const SizedBox(width: 8),
-            IconButton(
-                tooltip: 'Composition du gouvernement',
-                icon: const Icon(Icons.account_balance, size: 26, color: Colors.black87),
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) => const GovernmentModal(),
-                  );
-                },
+            _buildTopIconButton(
+              tooltip: _showVotedOnly ? 'Afficher toutes les lois' : 'Afficher uniquement les lois passées',
+              backgroundColor: _showVotedOnly ? AppColors.primaryBlue.withValues(alpha: 0.12) : null,
+              borderColor: _showVotedOnly ? AppColors.primaryBlue : null,
+              icon: Icon(
+                _showVotedOnly ? Icons.fact_check_rounded : Icons.fact_check_outlined,
+                size: 19,
+                color: _showVotedOnly ? AppColors.primaryBlue : AppColors.textSecondary,
               ),
-            IconButton(
-                tooltip: _showVotedOnly ? 'Afficher toutes les lois' : 'Afficher uniquement les lois passées',
-                icon: Icon(
-                  _showVotedOnly ? Icons.fact_check : Icons.fact_check_outlined,
-                  size: 26,
-                  color: _showVotedOnly ? Colors.blue[700] : Colors.black87,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _showVotedOnly = !_showVotedOnly;
-                  });
-                  _fetchLaws(refresh: true);
-                },
-              ),
+              onPressed: () {
+                setState(() {
+                  _showVotedOnly = !_showVotedOnly;
+                });
+                _fetchLaws(refresh: true);
+              },
+            ),
           ],
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              _showFavoritesOnly ? Icons.star : Icons.star_border,
-              size: 28,
-              color: UserSession().isGuest 
-                  ? Colors.grey[400] 
-                  : (_showFavoritesOnly ? Colors.amber[600] : Colors.black),
-            ),
+          _buildTopIconButton(
             tooltip: 'Mes lois favorites',
+            backgroundColor: _showFavoritesOnly ? Colors.amber.withValues(alpha: 0.15) : null,
+            borderColor: _showFavoritesOnly ? Colors.amber[700] : null,
+            icon: Icon(
+              _showFavoritesOnly ? Icons.star_rounded : Icons.star_outline_rounded,
+              size: 20,
+              color: UserSession().isGuest 
+                  ? AppColors.textDisabled 
+                  : (_showFavoritesOnly ? Colors.amber[700] : AppColors.textSecondary),
+            ),
             onPressed: UserSession().isGuest ? () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Inscrivez-vous pour utiliser les favoris !')),
@@ -376,20 +413,26 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
               });
             },
           ),
-          IconButton(
-              icon: Icon(Icons.person_outline, size: 28, color: UserSession().isGuest ? Colors.grey[400] : Colors.black),
-              onPressed: UserSession().isGuest ? () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Inscrivez-vous pour accéder au profil !')),
-                );
-              } : () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfileScreen()),
-                );
-              },
-            ),
           const SizedBox(width: 8),
+          _buildTopIconButton(
+            tooltip: 'Mon profil',
+            icon: Icon(
+              Icons.person_outline_rounded,
+              size: 20,
+              color: UserSession().isGuest ? AppColors.textDisabled : AppColors.textSecondary,
+            ),
+            onPressed: UserSession().isGuest ? () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Inscrivez-vous pour accéder au profil !')),
+              );
+            } : () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfileScreen()),
+              );
+            },
+          ),
+          const SizedBox(width: 12),
         ],
       ),
       body: Stack(
@@ -398,30 +441,47 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
         children: [
           if (_selectedTabIndex == 0)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Rechercher une loi...',
-                  prefixIcon: const Icon(Icons.search, color: Colors.grey),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(color: Colors.grey[200]!),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: const BorderSide(color: Colors.black, width: 1.5),
-                  ),
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 8),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: AppColors.cardBorder, width: 1),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
                 ),
-                onChanged: _onSearchChanged,
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: 'Rechercher une loi, un mot-clé...',
+                    hintStyle: const TextStyle(
+                      fontFamily: AppTheme.fontFamilySecondary,
+                      fontSize: 14,
+                      color: AppColors.textTertiary,
+                    ),
+                    prefixIcon: const Icon(Icons.search_rounded, size: 20, color: AppColors.textTertiary),
+                    suffixIcon: _searchQuery.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.close_rounded, size: 18, color: AppColors.textTertiary),
+                            onPressed: () {
+                              _onSearchChanged('');
+                            },
+                          )
+                        : null,
+                    filled: false,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  ),
+                  onChanged: _onSearchChanged,
+                ),
               ),
-          ),
+            ),
           Expanded(
             child: _isLoading
                 ? ListView.builder(
@@ -588,35 +648,94 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedTabIndex,
-        onTap: (index) {
-          if (UserSession().isGuest && index == 1) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Inscrivez-vous pour accéder à cette rubrique !')),
-            );
-            return;
-          }
-          setState(() {
-            _selectedTabIndex = index;
-          });
-
-
-        },
-        items: [
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.article),
-            label: 'Lois',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          border: const Border(top: BorderSide(color: AppColors.cardBorderSubtle, width: 1)),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+              blurRadius: 16,
+              offset: const Offset(0, -4),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          top: false,
+          child: BottomNavigationBar(
+            currentIndex: _selectedTabIndex,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            selectedItemColor: AppColors.primaryBlue,
+            unselectedItemColor: AppColors.textTertiary,
+            selectedLabelStyle: const TextStyle(
+              fontFamily: AppTheme.fontFamilySecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.2,
+            ),
+            unselectedLabelStyle: const TextStyle(
+              fontFamily: AppTheme.fontFamilySecondary,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+            type: BottomNavigationBarType.fixed,
+            onTap: (index) {
+              if (UserSession().isGuest && index == 1) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Inscrivez-vous pour accéder à cette rubrique !')),
+                );
+                return;
+              }
+              setState(() {
+                _selectedTabIndex = index;
+              });
+            },
+            items: [
+              const BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 3),
+                  child: Icon(Icons.article_outlined, size: 22),
+                ),
+                activeIcon: Padding(
+                  padding: EdgeInsets.only(bottom: 3),
+                  child: Icon(Icons.article_rounded, size: 22),
+                ),
+                label: 'Lois',
+              ),
+              BottomNavigationBarItem(
+                icon: Padding(
+                  padding: const EdgeInsets.only(bottom: 3),
+                  child: Icon(
+                    Icons.how_to_vote_outlined,
+                    size: 22,
+                    color: UserSession().isGuest ? Colors.grey[400] : null,
+                  ),
+                ),
+                activeIcon: Padding(
+                  padding: const EdgeInsets.only(bottom: 3),
+                  child: Icon(
+                    Icons.how_to_vote_rounded,
+                    size: 22,
+                    color: UserSession().isGuest ? Colors.grey[400] : null,
+                  ),
+                ),
+                label: 'Élection 2027',
+              ),
+              const BottomNavigationBarItem(
+                icon: Padding(
+                  padding: EdgeInsets.only(bottom: 3),
+                  child: Icon(Icons.people_outline_rounded, size: 22),
+                ),
+                activeIcon: Padding(
+                  padding: EdgeInsets.only(bottom: 3),
+                  child: Icon(Icons.people_rounded, size: 22),
+                ),
+                label: 'Députés',
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.how_to_vote, color: UserSession().isGuest ? Colors.grey[400] : null),
-            label: 'Élection 2027',
-          ),
-          BottomNavigationBarItem(
-            icon: const Icon(Icons.people),
-            label: 'Députés',
-          ),
-        ],
+        ),
       ),
     );
   }

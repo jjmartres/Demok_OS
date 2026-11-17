@@ -69,15 +69,9 @@ class _AmendementCardState extends State<AmendementCard> {
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+        boxShadow: AppColors.cardShadow,
       ),
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -87,13 +81,14 @@ class _AmendementCardState extends State<AmendementCard> {
             // Header: numéro + statut badge
             Row(
               children: [
-                Icon(Icons.article_outlined, size: 18, color: Colors.grey.shade600),
+                const Icon(Icons.edit_note_rounded, size: 20, color: AppColors.textSecondary),
                 const SizedBox(width: 6),
                 Text(
                   'Amendement n°${widget.amendement.numero}',
                   style: const TextStyle(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     fontSize: 14,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const Spacer(),
@@ -105,8 +100,8 @@ class _AmendementCardState extends State<AmendementCard> {
             // Auteur
             Row(
               children: [
-                Icon(Icons.person_outline, size: 16, color: Colors.grey.shade500),
-                const SizedBox(width: 4),
+                const Icon(Icons.person_outline_rounded, size: 16, color: AppColors.textSecondary),
+                const SizedBox(width: 5),
                 Expanded(
                   child: InkWell(
                     onTap: _isLoadingAuthor || widget.amendement.auteur.toLowerCase().contains('gouvernement')
@@ -232,17 +227,18 @@ class _AmendementCardState extends State<AmendementCard> {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3.5),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(6),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         widget.amendement.statutLabel,
         style: TextStyle(
           fontSize: 11,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
           color: textColor,
+          letterSpacing: 0.1,
         ),
       ),
     );

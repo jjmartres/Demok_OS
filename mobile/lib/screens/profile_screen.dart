@@ -271,18 +271,42 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
     final consti = _profileData!['constituency'];
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.scaffoldBackground,
       appBar: AppBar(
         title: const Text(
           'Mon profil',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+            letterSpacing: -0.4,
+          ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.surface,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        toolbarHeight: 64,
+        leadingWidth: 56,
+        leading: Center(
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.pillBackground,
+              shape: BoxShape.circle,
+              border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back_rounded, size: 20, color: AppColors.textPrimary),
+              onPressed: () => Navigator.pop(context),
+              padding: EdgeInsets.zero,
+              splashRadius: 20,
+            ),
+          ),
+        ),
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Column(
           children: [
             // Avatar / Badge
@@ -309,7 +333,7 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.person,
+                          Icons.person_rounded,
                           size: 50,
                           color: AppColors.primaryBlue,
                         ),
@@ -373,52 +397,62 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
                   ),
                 ],
               ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 28),
 
-            // User Info Cards
-            _buildInfoTile(Icons.cake, 'Année de naissance', _profileData!['birthYear']?.toString() ?? 'Non renseignée'),
-            
-            Divider(color: Colors.grey[200]),
-            
-            // Constituency Section (New)
-            if (consti != null) ...[
-               _buildInfoTile(
-                 Icons.map, 
-                 'Circonscription', 
-                 '${consti['name']}',
-                 onEdit: _showEditConstituencyDialog,
-               ),
-               _buildDeputyInfoTile('${consti['deputy']}', consti['deputyEmail'] ?? ''),
-            ] else ...[
-               _buildInfoTile(
-                 Icons.map, 
-                 'Circonscription', 
-                 'Non assignée',
-                 onEdit: _showEditConstituencyDialog,
-               ),
-            ],
-
-            Divider(color: Colors.grey[200]),
-            
-            _buildInfoTile(
-                Icons.email, 
-                'Email', 
-                _profileData!['email'] ?? 'Email masqué',
+            // User Info Card Container
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+                boxShadow: AppColors.cardShadow,
               ),
+              child: Column(
+                children: [
+                  _buildInfoTile(Icons.cake_outlined, 'Année de naissance', _profileData!['birthYear']?.toString() ?? 'Non renseignée'),
+                  const Divider(height: 1, color: AppColors.cardBorderSubtle),
+                  if (consti != null) ...[
+                    _buildInfoTile(
+                      Icons.location_on_outlined, 
+                      'Circonscription', 
+                      '${consti['name']}',
+                      onEdit: _showEditConstituencyDialog,
+                    ),
+                    const Divider(height: 1, color: AppColors.cardBorderSubtle),
+                    _buildDeputyInfoTile('${consti['deputy']}', consti['deputyEmail'] ?? ''),
+                  ] else ...[
+                    _buildInfoTile(
+                      Icons.location_on_outlined, 
+                      'Circonscription', 
+                      'Non assignée',
+                      onEdit: _showEditConstituencyDialog,
+                    ),
+                  ],
+                  const Divider(height: 1, color: AppColors.cardBorderSubtle),
+                  _buildInfoTile(
+                    Icons.mail_outline_rounded, 
+                    'Email', 
+                    _profileData!['email'] ?? 'Email masqué',
+                  ),
+                ],
+              ),
+            ),
             
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             // Préférence du ton des résumés (Classique vs Mode Rue)
             _buildSummaryToneSection(),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
             // Notification Preferences
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[200]!),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+                boxShadow: AppColors.cardShadow,
               ),
               child: Theme(
                 data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -427,13 +461,19 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
                   iconColor: AppColors.primaryBlue,
                   collapsedIconColor: AppColors.primaryBlue,
                   initiallyExpanded: widget.autoExpandNotifications,
-                  title: Text(
-                    'Notifications Push',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primaryBlue,
-                    ),
+                  title: Row(
+                    children: [
+                      const Icon(Icons.notifications_outlined, size: 20, color: AppColors.primaryBlue),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Notifications Push',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primaryBlue,
+                        ),
+                      ),
+                    ],
                   ),
                   childrenPadding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                   children: [
@@ -453,13 +493,14 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
                               );
                             }
                           },
-                          icon: Icon(_notificationsAuthorized ? Icons.check_circle : Icons.notifications_active),
+                          icon: Icon(_notificationsAuthorized ? Icons.check_circle_rounded : Icons.notifications_active_rounded),
                           label: Text(_notificationsAuthorized ? 'Notifications activées' : 'Activer sur cet appareil'),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _notificationsAuthorized ? Colors.green : AppColors.primaryBlue,
                             foregroundColor: Colors.white,
                             disabledBackgroundColor: Colors.green.withValues(alpha: 0.8),
                             disabledForegroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
                         ),
                       ),
@@ -484,20 +525,22 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
               ),
             ),
             
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
             
             // Stats (Votes and Status)
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: Colors.grey[50],
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[200]!),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+                boxShadow: AppColors.cardShadow,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildStatItem('Votes', '${_profileData!['voteCount'] ?? 0}'),
+                  Container(width: 1, height: 32, color: AppColors.cardBorderSubtle),
                   _buildStatItem(
                       'Statut',
                       _gamificationProgress?.levelName ?? 'Observateur',
@@ -506,8 +549,50 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
               ),
             ),
             
-            const SizedBox(height: 32),
+            const SizedBox(height: 20),
             
+            // Legal Section
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+                boxShadow: AppColors.cardShadow,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Informations légales',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.description_outlined, size: 20, color: AppColors.textSecondary),
+                    title: const Text('Conditions Générales d\'Utilisation', style: TextStyle(fontSize: 14)),
+                    trailing: const Icon(Icons.chevron_right_rounded, size: 20, color: AppColors.textSecondary),
+                    onTap: () => LegalDialogs.showCGU(context),
+                  ),
+                  const Divider(height: 1, color: AppColors.cardBorderSubtle),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.security_outlined, size: 20, color: AppColors.textSecondary),
+                    title: const Text('Politique de confidentialité', style: TextStyle(fontSize: 14)),
+                    trailing: const Icon(Icons.chevron_right_rounded, size: 20, color: AppColors.textSecondary),
+                    onTap: () => LegalDialogs.showPrivacyPolicy(context),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
             // Logout Button
             SizedBox(
               width: double.infinity,
@@ -521,68 +606,27 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
                     );
                   }
                 },
-                icon: Icon(Icons.logout, color: AppColors.voteContre),
-                label: Text(
+                icon: const Icon(Icons.logout_rounded, color: AppColors.voteContre, size: 20),
+                label: const Text(
                   'Déconnexion',
-                  style: TextStyle(color: AppColors.voteContre),
+                  style: TextStyle(color: AppColors.voteContre, fontWeight: FontWeight.bold),
                 ),
                 style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: AppColors.voteContre),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  side: const BorderSide(color: AppColors.cardBorder),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
               ),
             ),
             
-            const SizedBox(height: 16),
-            
-            // Legal Section
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey[200]!),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Informations légales',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.description_outlined, size: 20),
-                    title: const Text('Conditions Générales d\'Utilisation', style: TextStyle(fontSize: 14)),
-                    trailing: const Icon(Icons.chevron_right, size: 20),
-                    onTap: () => LegalDialogs.showCGU(context),
-                  ),
-                  Divider(height: 1, color: Colors.grey[100]),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.security_outlined, size: 20),
-                    title: const Text('Politique de confidentialité', style: TextStyle(fontSize: 14)),
-                    trailing: const Icon(Icons.chevron_right, size: 20),
-                    onTap: () => LegalDialogs.showPrivacyPolicy(context),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: TextButton.icon(
                 onPressed: () => _confirmDeleteAccount(),
-                icon: const Icon(Icons.delete_forever, color: Colors.redAccent),
+                icon: const Icon(Icons.delete_forever_rounded, color: Colors.redAccent, size: 20),
                 label: const Text(
                   'Supprimer mon compte définitivement',
                   style: TextStyle(
@@ -605,8 +649,9 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.cardBorderSubtle, width: 1),
+        boxShadow: AppColors.cardShadow,
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -620,12 +665,12 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
           title: Row(
             children: [
               Icon(
-                _isStreetMode ? Icons.local_fire_department : Icons.record_voice_over,
+                _isStreetMode ? Icons.local_fire_department_rounded : Icons.record_voice_over_rounded,
                 color: _isStreetMode ? const Color(0xFFEA580C) : AppColors.primaryBlue,
                 size: 20,
               ),
               const SizedBox(width: 8),
-              Text(
+              const Text(
                 'Ton des résumés',
                 style: TextStyle(
                   fontSize: 14,
@@ -689,15 +734,15 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(14),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 10),
         decoration: BoxDecoration(
-          color: isSelected ? activeColor.withValues(alpha: 0.08) : Colors.grey[50],
-          borderRadius: BorderRadius.circular(10),
+          color: isSelected ? activeColor.withValues(alpha: 0.08) : const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? activeColor : Colors.grey[300]!,
+            color: isSelected ? activeColor : AppColors.cardBorder,
             width: isSelected ? 1.5 : 1.0,
           ),
         ),
@@ -731,24 +776,27 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
-          Icon(icon, color: Colors.grey[600], size: 22),
-          const SizedBox(width: 16),
+          Icon(icon, color: AppColors.primaryBlue.withValues(alpha: 0.8), size: 22),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 12,
-                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textSecondary,
                   ),
                 ),
+                const SizedBox(height: 2),
                 Text(
                   value,
                   style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],
@@ -756,7 +804,7 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
           ),
           if (onEdit != null)
             IconButton(
-              icon: Icon(Icons.edit, size: 18, color: Colors.grey[400]),
+              icon: const Icon(Icons.edit_outlined, size: 18, color: AppColors.primaryBlue),
               onPressed: onEdit,
               constraints: const BoxConstraints(),
               padding: EdgeInsets.zero,
@@ -978,24 +1026,27 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Row(
           children: [
-            Icon(Icons.person_pin_circle, color: Colors.grey[600], size: 22),
-            const SizedBox(width: 16),
+            Icon(Icons.person_pin_circle_outlined, color: AppColors.primaryBlue.withValues(alpha: 0.8), size: 22),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Député',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textSecondary,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
                     deputyName,
                     style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 15.5,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ],
@@ -1003,7 +1054,7 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
             ),
             if (finalEmail.isNotEmpty)
               IconButton(
-                  icon: const Icon(Icons.email, color: AppColors.primaryBlue),
+                  icon: const Icon(Icons.mail_outline_rounded, color: AppColors.primaryBlue, size: 20),
                   onPressed: () => _sendEmailToDeputy(finalEmail),
                   tooltip: 'Envoyer un email au député',
                 ),

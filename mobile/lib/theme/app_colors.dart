@@ -79,11 +79,20 @@ class AppColors {
   /// Main background
   static const Color background = Color(0xFFFFFFFF);
   
+  /// Scaffold light background (modern Slate 50)
+  static const Color scaffoldBackground = Color(0xFFF8FAFC);
+  
+  /// Card and container surface
+  static const Color surface = Color(0xFFFFFFFF);
+  
   /// Secondary background (light gray)
   static const Color backgroundSecondary = Color(0xFFF3F4F6);
   
   /// Tertiary background (very light gray)
   static const Color backgroundTertiary = Color(0xFFF9FAFB);
+
+  /// Pill background for actions / search / filters
+  static const Color pillBackground = Color(0xFFF1F5F9);
 
   // ============================================================================
   // BORDER & DIVIDER COLORS
@@ -92,11 +101,58 @@ class AppColors {
   /// Default border color
   static const Color border = Color(0xFFE5E7EB);
   
+  /// Subtle modern card border (Slate 200)
+  static const Color cardBorder = Color(0xFFE2E8F0);
+  
+  /// Very light subtle border (Slate 100)
+  static const Color cardBorderSubtle = Color(0xFFEEF2F6);
+  
   /// Focused border color
   static const Color borderFocus = primaryBlue;
   
   /// Divider color
   static const Color divider = Color(0xFFE5E7EB);
+
+  // ============================================================================
+  // MODERN SHADOW DEFINITIONS
+  // ============================================================================
+  
+  /// Modern ultra-soft diffuse shadow for cards
+  static List<BoxShadow> get softShadow => [
+    BoxShadow(
+      color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+      blurRadius: 6,
+      offset: const Offset(0, 2),
+    ),
+  ];
+
+  /// Modern ultra-soft diffuse shadow for cards
+  static List<BoxShadow> get cardShadow => [
+    BoxShadow(
+      color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+      blurRadius: 12,
+      offset: const Offset(0, 3),
+    ),
+    BoxShadow(
+      color: const Color(0xFF0F172A).withValues(alpha: 0.02),
+      blurRadius: 4,
+      offset: const Offset(0, 1),
+    ),
+  ];
+
+  /// Elevated shadow for floating bars, modals and popups
+  static List<BoxShadow> get elevatedShadow => [
+    BoxShadow(
+      color: const Color(0xFF0F172A).withValues(alpha: 0.08),
+      blurRadius: 20,
+      offset: const Offset(0, 6),
+    ),
+    BoxShadow(
+      color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+      blurRadius: 6,
+      offset: const Offset(0, 2),
+    ),
+  ];
 
   // ============================================================================
   // VOTE-SPECIFIC COLORS
