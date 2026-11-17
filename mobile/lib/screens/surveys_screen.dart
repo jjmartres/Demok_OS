@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../models/candidate.dart';
+import '../data/political_street_data.dart';
 import '../services/user_session.dart';
 import '../theme/app_colors.dart';
 import '../services/api_client.dart';
@@ -391,138 +392,284 @@ class _SurveysScreenState extends State<SurveysScreen> {
   }
 
   void _showCandidateDetail(Candidate candidate) {
+    bool isStreet = UserSession().isStreetModePreferred;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.only(top: 24, left: 24, right: 24, bottom: 32),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(24),
-              topRight: Radius.circular(24),
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Poignée du modal
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 24),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setModalState) {
+            final streetSummary = PoliticalStreetData.getCandidateStreetSummary(
+              candidate.name,
+              defaultDescription: candidate.description,
+            );
+            final displaySummary = isStreet ? streetSummary : (candidate.description ?? '');
+
+            final partyBio = PoliticalStreetData.getPartyBio(
+              candidate.party,
+              streetMode: isStreet,
+            );
+
+            return Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.9,
+              ),
+              padding: const EdgeInsets.only(top: 24, left: 24, right: 24, bottom: 32),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
                 ),
-                // Photo du candidat (s'il y en a une, différente du logo du parti)
-                if (candidate.fullPhotoUrl != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: Image.network(
-                      candidate.fullPhotoUrl!,
-                      height: 120,
-                      width: 100,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.account_circle, size: 80, color: Colors.grey),
-                    ),
-                  )
-                else
-                  const Icon(Icons.account_circle, size: 80, color: Colors.grey),
-                const SizedBox(height: 16),
-                
-                // Nom et parti
-                Text(
-                  candidate.name,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  candidate.party,
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600], fontWeight: FontWeight.w500),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                
-                // Résumé IA
-                if (candidate.description != null && candidate.description!.isNotEmpty)
-                  Column(
+              ),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Poignée du modal
                       Container(
-                        padding: const EdgeInsets.all(16),
+                        width: 40,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 20),
                         decoration: BoxDecoration(
-                          color: Colors.grey[50],
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade200),
-                        ),
-                        child: Text(
-                          candidate.description!,
-                          style: const TextStyle(fontSize: 14, height: 1.5, color: Colors.black87),
-                          textAlign: TextAlign.left,
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(2),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        "Généré par Mistral IA",
-                        style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          color: Colors.grey,
-                          fontSize: 12,
+
+                      // Photo officielle du candidat
+                      if (candidate.fullPhotoUrl != null)
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.network(
+                            candidate.fullPhotoUrl!,
+                            height: 120,
+                            width: 100,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.account_circle, size: 80, color: Colors.grey),
+                          ),
+                        )
+                      else
+                        const Icon(Icons.account_circle, size: 80, color: Colors.grey),
+                      const SizedBox(height: 16),
+
+                      // Nom et parti
+                      Text(
+                        candidate.name,
+                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        candidate.party,
+                        style: TextStyle(fontSize: 16, color: Colors.grey[600], fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 18),
+
+                      // Toggle Classique / Mode Rue
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            GestureDetector(
+                              onTap: () => setModalState(() => isStreet = false),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: !isStreet ? AppColors.primaryBlue : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  '🏛️ Classique',
+                                  style: TextStyle(
+                                    color: !isStreet ? Colors.white : Colors.grey[700],
+                                    fontWeight: !isStreet ? FontWeight.bold : FontWeight.w500,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => setModalState(() => isStreet = true),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: isStreet ? const Color(0xFFEA580C) : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  '🔥 Mode Rue',
+                                  style: TextStyle(
+                                    color: isStreet ? Colors.white : Colors.grey[700],
+                                    fontWeight: isStreet ? FontWeight.bold : FontWeight.w500,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+
+                      // Résumé du profil (Classique ou Mode Rue)
+                      if (displaySummary.isNotEmpty) ...[
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: isStreet ? const Color(0xFFFFF7ED) : Colors.grey[50],
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isStreet ? const Color(0xFFFDBA74) : Colors.grey.shade200,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    isStreet ? '🔥 Le profil en Mode Rue' : '🏛️ Synthèse du candidat',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 13,
+                                      color: isStreet ? const Color(0xFFEA580C) : AppColors.primaryBlue,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                displaySummary,
+                                style: const TextStyle(fontSize: 14, height: 1.5, color: Colors.black87),
+                                textAlign: TextAlign.left,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          isStreet ? "Généré par Mistral IA (Style Urbain)" : "Généré par Mistral IA",
+                          style: const TextStyle(
+                            fontStyle: FontStyle.italic,
+                            color: Colors.grey,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+
+                      // Courte biographie du parti
+                      if (partyBio != null && partyBio.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: isStreet ? const Color(0xFFFFFBEB) : const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isStreet ? const Color(0xFFFDE68A) : Colors.grey.shade300,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  // Petit logo du parti si disponible
+                                  if (candidate.logoPath != null)
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8.0),
+                                      child: candidate.isNetworkLogo
+                                          ? (candidate.isSvgLogo
+                                              ? SvgPicture.network(candidate.logoPath!, height: 20)
+                                              : Image.network(candidate.logoPath!, height: 20))
+                                          : (candidate.isSvgLogo
+                                              ? SvgPicture.asset(candidate.logoPath!, height: 20)
+                                              : Image.asset(candidate.logoPath!, height: 20)),
+                                    ),
+                                  Expanded(
+                                    child: Text(
+                                      isStreet ? '🔥 Le bail du parti : ${candidate.party}' : '🏛️ À propos de : ${candidate.party}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: isStreet ? const Color(0xFFD97706) : Colors.grey[800],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                partyBio,
+                                style: TextStyle(fontSize: 13, height: 1.4, color: Colors.grey[800]),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+
+                      const SizedBox(height: 20),
+
+                      // Bouton Programme
+                      if (candidate.programUrl != null && candidate.programUrl!.isNotEmpty)
+                        OutlinedButton.icon(
+                          onPressed: () async {
+                            final url = Uri.parse(candidate.programUrl!);
+                            if (await canLaunchUrl(url)) {
+                              await launchUrl(url);
+                            }
+                          },
+                          icon: const Icon(Icons.public, size: 20),
+                          label: const Text("Voir le programme"),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.primaryBlue,
+                            side: const BorderSide(color: AppColors.primaryBlue),
+                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                        ),
+
+                      const SizedBox(height: 16),
+
+                      // Bouton de Vote
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _showVoteConfirmation(candidate);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryBlue,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
+                          child: const Text(
+                            "Voter pour ce profil",
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                          ),
                         ),
                       ),
                     ],
                   ),
-                const SizedBox(height: 24),
-                
-                // Bouton Programme
-                if (candidate.programUrl != null && candidate.programUrl!.isNotEmpty)
-                  OutlinedButton.icon(
-                    onPressed: () async {
-                      final url = Uri.parse(candidate.programUrl!);
-                      if (await canLaunchUrl(url)) {
-                        await launchUrl(url);
-                      }
-                    },
-                    icon: const Icon(Icons.public, size: 20),
-                    label: const Text("Voir le programme"),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primaryBlue,
-                      side: const BorderSide(color: AppColors.primaryBlue),
-                      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                  ),
-                
-                const SizedBox(height: 24),
-                
-                // Bouton de Vote
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _showVoteConfirmation(candidate);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    ),
-                    child: const Text(
-                      "Voter pour ce profil",
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                    ),
-                  ),
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );

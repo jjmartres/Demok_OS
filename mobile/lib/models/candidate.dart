@@ -74,6 +74,22 @@ class Candidate {
       "nouveau parti anticapitaliste": 'assets/images/logos_partis/Nouveau_Parti_Anticapitaliste_logo.png',
       "revolution permanente": 'assets/images/logos_partis/Revolution_Permanente_logo.svg',
       "union populaire republicaine": 'assets/images/logos_partis/Union_Populaire_Republicaine_logo.jpg',
+      "modem": 'assets/images/logos_partis/Modem.svg',
+      "generation ecologie": 'assets/images/logos_partis/Generation_ecologie.png',
+      "les patriotes": 'assets/images/logos_partis/Les_Patriotes.png',
+      "resistons": 'assets/images/logos_partis/Resistons.png',
+      "parti animaliste": 'assets/images/logos_partis/Parti_animaliste.png',
+      "union democratique bretonne": 'assets/images/logos_partis/Union_democratique_bretonne.svg',
+      "udb": 'assets/images/logos_partis/Union_democratique_bretonne.svg',
+      "gauche republicaine et socialiste": 'assets/images/logos_partis/Gauche_Republicaine_et_Socialiste.png',
+      "grs": 'assets/images/logos_partis/Gauche_Republicaine_et_Socialiste.png',
+      "equinoxe": 'assets/images/logos_partis/Equinoxe.webp',
+      "la convention": 'assets/images/logos_partis/La_Convention.png',
+      "les ruches": 'assets/images/logos_partis/Les_Ruches.svg',
+      "france libre": 'assets/images/logos_partis/France_Libre.png',
+      "solution democratique": 'assets/images/logos_partis/Solution_Democratique.webp',
+      "nous sommes la france": 'assets/images/logos_partis/Nous_Sommes_la_France.svg',
+      "trajectoire": 'assets/images/logos_partis/Trajectoire.png',
     };
 
     return partyLogos[normalized];
