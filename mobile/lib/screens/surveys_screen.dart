@@ -309,7 +309,19 @@ class _SurveysScreenState extends State<SurveysScreen> {
               Expanded(
                 child: Center(
                   child: candidate.logoPath == null
-                      ? const Icon(Icons.account_balance, size: 48, color: AppColors.primaryBlue)
+                      ? (candidate.fullPhotoUrl != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(30),
+                              child: Image.network(
+                                candidate.fullPhotoUrl!,
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.account_balance, size: 48, color: AppColors.primaryBlue),
+                              ),
+                            )
+                          : const Icon(Icons.account_balance, size: 48, color: AppColors.primaryBlue))
                       : (candidate.isNetworkLogo
                           ? (candidate.isSvgLogo
                               ? SvgPicture.network(
@@ -690,7 +702,7 @@ class _SurveysScreenState extends State<SurveysScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-               // Petit Logo en haut des résultats
+               // Petit Logo ou photo en haut des résultats
                if (candidate.logoPath != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
@@ -717,6 +729,21 @@ class _SurveysScreenState extends State<SurveysScreen> {
                                 height: 30,
                                 fit: BoxFit.contain,
                               )),
+                  )
+               else if (candidate.fullPhotoUrl != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(
+                        candidate.fullPhotoUrl!,
+                        height: 30,
+                        width: 30,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const SizedBox(height: 8),
+                      ),
+                    ),
                   ),
               Text(
                 result['name'],

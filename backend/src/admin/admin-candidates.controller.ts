@@ -2,6 +2,7 @@ import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, UseIntercep
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Candidate } from '../surveys/candidate.entity';
+import { CandidatesSyncService } from '../surveys/candidates-sync.service';
 import { AdminKeyGuard } from './admin-key.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -28,6 +29,7 @@ export class AdminCandidatesController {
     constructor(
         @InjectRepository(Candidate)
         private readonly candidateRepository: Repository<Candidate>,
+        private readonly candidatesSyncService: CandidatesSyncService,
     ) {}
 
     @Get()
@@ -39,6 +41,11 @@ export class AdminCandidatesController {
             const lastNameB = getLastName(b.name).toLowerCase();
             return lastNameA.localeCompare(lastNameB, 'fr');
         });
+    }
+
+    @Post('sync')
+    async syncFromSource() {
+        return this.candidatesSyncService.syncCandidates();
     }
 
     @Post()

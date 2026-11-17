@@ -11,6 +11,7 @@ import { Amendement } from '../laws/amendement.entity';
 import { Report } from '../reports/entities/report.entity';
 import { ReportsModule } from '../reports/reports.module';
 import { NotificationModule } from '../notifications/notification.module';
+import { SurveysModule } from '../surveys/surveys.module';
 
 import { Citizen } from '../users/citizen.entity';
 import { VoteUrna } from '../votes/vote-choice.entity';
@@ -22,8 +23,8 @@ import { Candidate } from '../surveys/candidate.entity';
         TypeOrmModule.forFeature([Law, Amendement, Report, Citizen, VoteUrna, TopicPoll, Candidate]),
         IngestionModule,
         ReportsModule,
-
         NotificationModule, // Expose NotificationService via ses exports
+        SurveysModule,
     ],
     controllers: [
         AdminIngestionController,

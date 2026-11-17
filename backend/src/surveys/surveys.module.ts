@@ -11,6 +11,7 @@ import { TopicPollController } from './topic-poll.controller';
 import { SurveyRegistry } from './survey-registry.entity';
 import { SurveyUrna } from './survey-urna.entity';
 import { Citizen } from '../users/citizen.entity';
+import { CandidatesSyncService } from './candidates-sync.service';
 
 @Module({
     imports: [
@@ -25,7 +26,7 @@ import { Citizen } from '../users/citizen.entity';
         ])
     ],
     controllers: [SurveysController, TopicPollController],
-    providers: [SurveysService, TopicPollService],
-    exports: [SurveysService, TopicPollService]
+    providers: [SurveysService, TopicPollService, CandidatesSyncService],
+    exports: [SurveysService, TopicPollService, CandidatesSyncService]
 })
 export class SurveysModule { }

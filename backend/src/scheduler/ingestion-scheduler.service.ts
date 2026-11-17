@@ -6,6 +6,7 @@ import { DeputyVoteIngestionService } from '../ingestion/deputy-vote-ingestion.s
 import { AmendementIngestionService } from '../ingestion/amendement-ingestion.service';
 import { DocumentIngestionService } from '../ingestion/document-ingestion.service';
 import { PromulgationSyncService } from '../ingestion/promulgation-sync.service';
+import { CandidatesSyncService } from '../surveys/candidates-sync.service';
 
 import { NotificationService } from '../notifications/notification.service';
 
@@ -21,7 +22,23 @@ export class IngestionSchedulerService {
         private documentIngestionService: DocumentIngestionService,
         private promulgationSyncService: PromulgationSyncService,
         private notificationService: NotificationService,
+        private candidatesSyncService: CandidatesSyncService,
     ) { }
+
+    /**
+     * Cron job : Tous les matins à 7h00 (heure de Paris)
+     * Synchronise la liste des candidats à la présidentielle 2027 depuis https://www.candidatspresidentielles2027.fr
+     */
+    @Cron('0 7 * * *', { timeZone: 'Europe/Paris' })
+    async handleCandidatesSync() {
+        this.logger.log('⏰ Déclenchement du cron de 7h00 : Synchronisation Candidats Présidentielle 2027');
+        try {
+            const result = await this.candidatesSyncService.syncCandidates();
+            this.logger.log(`✅ Sync Candidats 2027 terminée : ${result.created} créés, ${result.updated} photos mises à jour`);
+        } catch (error) {
+            this.logger.error('❌ Erreur lors de la synchronisation des candidats 2027', error.stack);
+        }
+    }
 
     /**
      * Cron job : Tous les matins à 8h00 (heure de Paris)
