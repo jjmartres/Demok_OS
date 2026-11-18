@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
-/// Notification moderne et fluide de gain d'XP.
-/// Fait glisser une capsule élégante depuis le haut de l'écran vers le bas,
+/// Notification moderne et fluide de gain d'XP aux couleurs de la charte Démok.
+/// Fait glisser une capsule blanche et élégante depuis le haut de l'écran vers le bas,
 /// la maintient un instant pour une lecture confortable,
 /// puis la fait continuer sa descente douce en fondu (fade-out).
 class XpNotification extends StatefulWidget {
@@ -123,36 +124,32 @@ class _XpNotificationState extends State<XpNotification>
                     onTap: _dismissImmediately,
                     child: Container(
                       margin: const EdgeInsets.symmetric(horizontal: 20),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
                         border: Border.all(
-                          color: const Color(0xFFF59E0B).withValues(alpha: 0.65),
-                          width: 1.5,
+                          color: AppColors.primaryBlue.withValues(alpha: 0.22),
+                          width: 1.2,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFF59E0B).withValues(alpha: 0.35),
+                            color: AppColors.darkBlue.withValues(alpha: 0.12),
                             blurRadius: 18,
-                            spreadRadius: 1,
+                            spreadRadius: 0,
                             offset: const Offset(0, 6),
                           ),
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.25),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
+                            color: Colors.black.withValues(alpha: 0.04),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // Médaillon d'éclair avec dégradé doré
+                          // Médaillon d'éclair avec dégradé doré ambré
                           Container(
                             width: 30,
                             height: 30,
@@ -165,9 +162,10 @@ class _XpNotificationState extends State<XpNotification>
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFFF59E0B).withValues(alpha: 0.5),
+                                  color: const Color(0xFFF59E0B).withValues(alpha: 0.35),
                                   blurRadius: 8,
-                                  spreadRadius: 1,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 2),
                                 ),
                               ],
                             ),
@@ -179,14 +177,14 @@ class _XpNotificationState extends State<XpNotification>
                           ),
                           const SizedBox(width: 10),
 
-                          // Montant XP doré
+                          // Montant XP doré ambré (haute lisibilité sur fond blanc)
                           Text(
                             '+${widget.amount} XP',
                             style: const TextStyle(
-                              color: Color(0xFFFBBF24),
+                              color: Color(0xFFD97706),
                               fontWeight: FontWeight.w900,
                               fontSize: 16,
-                              letterSpacing: 0.4,
+                              letterSpacing: 0.3,
                               decoration: TextDecoration.none,
                             ),
                           ),
@@ -197,19 +195,19 @@ class _XpNotificationState extends State<XpNotification>
                             child: Container(
                               width: 4,
                               height: 4,
-                              decoration: BoxDecoration(
+                              decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white.withValues(alpha: 0.35),
+                                color: Color(0xFFCBD5E1),
                               ),
                             ),
                           ),
 
-                          // Libellé de la récompense
+                          // Libellé de la récompense (Bleu foncé Démok)
                           Text(
                             widget.reason.isNotEmpty ? widget.reason : 'Vote citoyen',
                             style: const TextStyle(
-                              color: Color(0xFFF8FAFC),
-                              fontWeight: FontWeight.w600,
+                              color: AppColors.darkBlue,
+                              fontWeight: FontWeight.w700,
                               fontSize: 13.5,
                               letterSpacing: 0.1,
                               decoration: TextDecoration.none,
@@ -217,10 +215,10 @@ class _XpNotificationState extends State<XpNotification>
                           ),
                           const SizedBox(width: 8),
 
-                          // Étoile discrète
+                          // Étoile discrète dorée
                           const Icon(
                             Icons.auto_awesome_rounded,
-                            color: Color(0xFFFBBF24),
+                            color: Color(0xFFF59E0B),
                             size: 16,
                           ),
                         ],
