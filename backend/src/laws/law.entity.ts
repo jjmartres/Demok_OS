@@ -55,6 +55,11 @@ export class Law {
         sections: Record<string, string>; // category name -> explanation
         pro: string[];
         con: string[];
+        deepDive?: {
+            dailyImpact: string;
+            keyFigures: string[];
+            politicalDebate: string;
+        };
     };
 
     @Column('jsonb', { nullable: true })
@@ -63,6 +68,11 @@ export class Law {
         sections: Record<string, string>;
         pro: string[];
         con: string[];
+        deepDive?: {
+            dailyImpact: string;
+            keyFigures: string[];
+            politicalDebate: string;
+        };
     };
 
     @Column({

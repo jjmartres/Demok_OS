@@ -194,18 +194,43 @@ class Law {
   }
 }
 
+/// Décryptage approfondi d'une loi (impact quotidien, chiffres clés, coulisses politiques)
+class LawDeepDive {
+  final String dailyImpact;
+  final List<String> keyFigures;
+  final String politicalDebate;
+
+  LawDeepDive({
+    required this.dailyImpact,
+    required this.keyFigures,
+    required this.politicalDebate,
+  });
+
+  factory LawDeepDive.fromJson(Map<String, dynamic> json) {
+    return LawDeepDive(
+      dailyImpact: json['dailyImpact'] ?? '',
+      keyFigures: json['keyFigures'] != null 
+          ? List<String>.from(json['keyFigures']) 
+          : [],
+      politicalDebate: json['politicalDebate'] ?? '',
+    );
+  }
+}
+
 /// Résumé simplifié d'une loi avec les sections par catégorie et les arguments Pro/Contra.
 class LawSummary {
   final String? titleVulgarized;
   final Map<String, String> sections;
   final List<String> pro;
   final List<String> con;
+  final LawDeepDive? deepDive;
 
   LawSummary({
     this.titleVulgarized,
     required this.sections,
     required this.pro,
     required this.con,
+    this.deepDive,
   });
 
   factory LawSummary.fromJson(Map<String, dynamic> json) {
@@ -214,6 +239,7 @@ class LawSummary {
       sections: Map<String, String>.from(json['sections'] ?? {}),
       pro: List<String>.from(json['pro'] ?? []),
       con: List<String>.from(json['con'] ?? []),
+      deepDive: json['deepDive'] != null ? LawDeepDive.fromJson(json['deepDive']) : null,
     );
   }
 }

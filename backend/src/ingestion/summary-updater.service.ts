@@ -91,13 +91,23 @@ Réponds UNIQUEMENT avec un objet JSON valide suivant scrupuleusement cette stru
         "titre": "Un titre vulgarisé clair et percutant (max 10-15 mots)",
         "resume": "Un résumé clair et accessible en 3-4 phrases",
         "arguments_pour": ["Argument 1", "Argument 2"],
-        "arguments_contre": ["Argument 1", "Argument 2"]
+        "arguments_contre": ["Argument 1", "Argument 2"],
+        "deepDive": {
+            "dailyImpact": "Impact pratique direct sur le quotidien des citoyens ou pros (3 phrases)",
+            "keyFigures": ["Chiffre/date vérifié sans hallucination (ou 'Aucun chiffre clé dans le texte')"],
+            "politicalDebate": "Qui défend, qui attaque et pourquoi ça clive"
+        }
     },
     "rue": {
         "titre": "Un titre en langage de rue percutant",
         "resume": "Le résumé en langage rue / argot accessible et vivant",
         "arguments_pour": ["Argument 1 rue", "Argument 2 rue"],
-        "arguments_contre": ["Argument 1 rue", "Argument 2 rue"]
+        "arguments_contre": ["Argument 1 rue", "Argument 2 rue"],
+        "deepDive": {
+            "dailyImpact": "Ce qui change dans ta vie de tous les jours en mode rue (3 phrases)",
+            "keyFigures": ["Chiffre ou date vérifiée en mode rue"],
+            "politicalDebate": "Qui valide le bail et qui a le seum dans l'hémicycle"
+        }
     }
 }
 Sois parfaitement objectif et équilibré sur le fond juridique dans les deux versions.`,
@@ -108,7 +118,7 @@ Sois parfaitement objectif et équilibré sur le fond juridique dans les deux ve
                         },
                     ],
                     response_format: { type: "json_object" },
-                    max_tokens: 1200,
+                    max_tokens: 1800,
                 }),
             });
 
@@ -156,6 +166,9 @@ Sois parfaitement objectif et équilibré sur le fond juridique dans les deux ve
                 if (classique.arguments_contre && Array.isArray(classique.arguments_contre) && classique.arguments_contre.length > 0) {
                     defaultSummary.sections['Arguments Contre'] = classique.arguments_contre.map((p: string) => `• ${p.trim()}`).join('\n');
                 }
+                if (classique.deepDive) {
+                    defaultSummary.deepDive = classique.deepDive;
+                }
             } else {
                 defaultSummary.sections['Résumé'] = `Cette loi a été mise à jour le ${new Date().toLocaleDateString('fr-FR')}. Contenu principal : ${law.titleOfficial}.`;
             }
@@ -181,6 +194,9 @@ Sois parfaitement objectif et équilibré sur le fond juridique dans les deux ve
                 }
                 if (rue.arguments_contre && Array.isArray(rue.arguments_contre) && rue.arguments_contre.length > 0) {
                     streetSummary.sections['Arguments Contre'] = rue.arguments_contre.map((p: string) => `• ${p.trim()}`).join('\n');
+                }
+                if (rue.deepDive) {
+                    streetSummary.deepDive = rue.deepDive;
                 }
                 law.summaryStreet = streetSummary;
                 this.logger.log(`✅ Mode Rue généré (${streetSummary.sections['Résumé'].length} chars)`);

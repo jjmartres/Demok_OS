@@ -77,6 +77,18 @@ export class VotesController {
     }
 
     /**
+     * Gets or generates an AI deep-dive for a law (Classique + Mode Rue).
+     * Cached in DB after first generation.
+     */
+    @Get('laws/:lawId/deep-dive')
+    @UseGuards(OptionalJwtAuthGuard)
+    async getLawDeepDive(
+        @Param('lawId') lawId: string,
+    ) {
+        return this.votesService.getOrGenerateDeepDive(lawId);
+    }
+
+    /**
      * Checks if a user has voted on a law and returns context (stats, deputy match).
      */
     @Get('check')

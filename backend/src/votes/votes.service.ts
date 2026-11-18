@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, Brackets } from 'typeorm';
 import { VoteRegistry } from './vote-registry.entity';
@@ -16,6 +16,7 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class VotesService {
+    private readonly logger = new Logger(VotesService.name);
     /**
      * @param lawRepository Repository for laws/proposals
      * @param citizenRepository Repository for citizen profiles
@@ -535,6 +536,163 @@ export class VotesService {
             relations: ['law'],
         });
         return favorites.map(f => f.law.id);
+    }
+
+    /**
+     * Récupère ou génère un décryptage approfondi d'une loi (Classique + Mode Rue).
+     * Les données générées sont stockées de façon permanente dans law.summary.deepDive et law.summaryStreet.deepDive.
+     */
+    async getOrGenerateDeepDive(lawId: string): Promise<any> {
+        const law = await this.lawRepository.findOne({ where: { id: lawId } });
+        if (!law) {
+            throw new NotFoundException('Loi non trouvée');
+        }
+
+        // Si déjà généré et en cache dans la BDD, on renvoie immédiatement (0ms, 0 jeton d'API)
+        if (law.summary?.deepDive && law.summaryStreet?.deepDive) {
+            return {
+                lawId: law.id,
+                classique: law.summary.deepDive,
+                rue: law.summaryStreet.deepDive,
+                cached: true,
+            };
+        }
+
+        const mistralApiKey = process.env.MISTRAL_API_KEY;
+        const mistralModel = process.env.MISTRAL_MODEL || 'mistral-small-latest';
+
+        // Fallback si pas de clé API configurée
+        if (!mistralApiKey) {
+            const fallbackClassique = {
+                dailyImpact: `Cette proposition ou ce projet de loi ("${law.titleOfficial}") vise à faire évoluer les règles en vigueur dans son domaine d'application. Ses effets pratiques s'appliqueront aux acteurs et citoyens concernés dès sa promulgation officielle.`,
+                keyFigures: [
+                    "Aucun chiffre ou date clé n'est précisé dans le texte initial."
+                ],
+                politicalDebate: "Ce texte fait l'objet de discussions au Parlement entre la majorité et les oppositions sur l'opportunité de la réforme et ses modalités d'application."
+            };
+            const fallbackRue = {
+                dailyImpact: `En gros, ce texte ("${law.titleVulgarized || law.titleOfficial}") veut bousculer les règles actuelles. Dès que c'est voté et validé, ça va s'appliquer direct sur le terrain pour ceux qui sont concernés.`,
+                keyFigures: [
+                    "Aucun chiffre ou date clé n'est précisé dans le texte initial."
+                ],
+                politicalDebate: "Dans l'hémicycle ça débat sec : certains veulent faire passer le bail en vitesse, d'autres montent au créneau pour bloquer ou modifier des articles."
+            };
+
+            return {
+                lawId: law.id,
+                classique: fallbackClassique,
+                rue: fallbackRue,
+                cached: false,
+            };
+        }
+
+        try {
+            this.logger.log(`🤖 Génération Deep Dive Mistral pour la loi ${lawId} ("${law.titleOfficial}")...`);
+
+            const systemPrompt = `Tu es un juriste expert et vulgarisateur pour l'application citoyenne Démok.
+Ta tâche est d'analyser un texte de loi pour produire un DÉCRYPTAGE APPROFONDI en 3 axes précis, à la fois en version "classique" et en version "rue" :
+
+Axe 1 - Impact Quotidien :
+Explique de manière très concrète, pratique et palpable ce qui change dans la vie de tous les jours du citoyen ordinaire, des salariés, des consommateurs ou des familles si cette loi est appliquée. Pas de jargon abstrait, des situations de vie réelles (3 à 5 phrases).
+
+Axe 2 - Chiffres et Dates Clés :
+RÈGLE D'OR STRICTE ANTI-HALLUCINATION : N'INVENTE AUCUN CHIFFRE NI DATE. Extrais UNIQUEMENT les données numériques, pourcentages, seuils financiers en euros, sanctions, durées ou dates d'application réellement mentionnés dans le texte fourni.
+Si aucun chiffre ou date précise ne figure dans le texte fourni, liste exactement 1 élément : "Aucun chiffre ou date clé n'est précisé dans le texte initial."
+
+Axe 3 - Coulisses et Débats Politiques :
+Explique qui défend ce texte (gouvernement, groupe parlementaire, secteur), qui s'y oppose fermement et quels sont les vrais arguments d'affrontement politique ou idéologique (3 à 5 phrases).
+
+Tu dois fournir DEUX versions :
+1) "classique" : style clair, rigoureux, équilibré, accessible mais sérieux.
+2) "rue" : en argot urbain moderne vivant et percutant, plein d'énergie, sans langue de bois tout en restant parfaitement fidèle et équilibré sur le fond.
+
+Réponds STRICTEMENT sous ce format JSON :
+{
+  "classique": {
+    "dailyImpact": "Texte concret de 3 à 5 phrases sur l'impact quotidien.",
+    "keyFigures": [
+      "Point clé avec chiffre/date vérifié",
+      "Autre point clé vérifié"
+    ],
+    "politicalDebate": "Texte expliquant les positions politiques et les points de friction."
+  },
+  "rue": {
+    "dailyImpact": "Le topo sur ce qui change direct dans ta vie de tous les jours en langage de rue.",
+    "keyFigures": [
+      "Point clé en mode rue avec chiffre/date vérifié",
+      "Autre point clé en mode rue"
+    ],
+    "politicalDebate": "Qui valide le bail, qui a le seum, et pourquoi ça clashe dans l'hémicycle."
+  }
+}`;
+
+            const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${mistralApiKey}`,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({
+                    model: mistralModel,
+                    messages: [
+                        { role: 'system', content: systemPrompt },
+                        {
+                            role: 'user',
+                            content: `Analyse cette loi :\nTitre officiel : ${law.titleOfficial}\nTitre vulgarisé : ${law.titleVulgarized || ''}\nRésumé existant : ${law.summary?.sections?.['Résumé'] || ''}\nContenu du texte : ${(law.rawText || '').substring(0, 4500)}`,
+                        },
+                    ],
+                    response_format: { type: "json_object" },
+                    max_tokens: 1400,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Mistral API error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            const content = data.choices[0]?.message?.content;
+            const parsed = JSON.parse(content);
+
+            if (parsed.classique && parsed.rue) {
+                // Sauvegarder dans la BDD pour mise en cache permanente
+                const updatedSummary = law.summary || { sections: {}, pro: [], con: [] };
+                updatedSummary.deepDive = parsed.classique;
+                law.summary = updatedSummary;
+
+                const updatedSummaryStreet = law.summaryStreet || { sections: {}, pro: [], con: [] };
+                updatedSummaryStreet.deepDive = parsed.rue;
+                law.summaryStreet = updatedSummaryStreet;
+
+                await this.lawRepository.save(law);
+                this.logger.log(`✅ Deep Dive mis en cache avec succès pour loi ${lawId}`);
+
+                return {
+                    lawId: law.id,
+                    classique: parsed.classique,
+                    rue: parsed.rue,
+                    cached: false,
+                };
+            }
+            throw new Error('Réponse Mistral incomplète');
+        } catch (error) {
+            this.logger.error(`Erreur génération deep dive pour loi ${lawId}: ${error.message}`);
+            return {
+                lawId: law.id,
+                classique: {
+                    dailyImpact: `Ce texte ("${law.titleOfficial}") établit un cadre juridique précis destiné à s'appliquer directement aux secteurs concernés.`,
+                    keyFigures: ["Aucun chiffre ou date clé n'est précisé dans le texte initial."],
+                    politicalDebate: "Les débats au Parlement portent sur l'équilibre entre les objectifs poursuivis par le texte et les contraintes imposées."
+                },
+                rue: {
+                    dailyImpact: `Ce bail ("${law.titleVulgarized || law.titleOfficial}") pose de nouvelles règles qui vont impacter direct les personnes et structures concernées.`,
+                    keyFigures: ["Aucun chiffre ou date clé n'est précisé dans le texte initial."],
+                    politicalDebate: "Dans l'hémicycle ça discute fort entre ceux qui veulent pousser la réforme et ceux qui veulent freiner des quatre fers."
+                },
+                cached: false,
+            };
+        }
     }
 }
 

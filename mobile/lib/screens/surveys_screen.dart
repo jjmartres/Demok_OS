@@ -423,6 +423,11 @@ class _SurveysScreenState extends State<SurveysScreen> {
               streetMode: isStreet,
             );
 
+            final keyMeasures = PoliticalStreetData.getCandidateKeyMeasures(
+              candidate.name,
+              streetMode: isStreet,
+            );
+
             return Container(
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.9,
@@ -629,6 +634,69 @@ class _SurveysScreenState extends State<SurveysScreen> {
                                 style: TextStyle(fontSize: 13, height: 1.4, color: Colors.grey[800]),
                               ),
                             ],
+                          ),
+                        ),
+                      ],
+
+                      if (keyMeasures.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: isStreet ? const Color(0xFFFFFBEB) : Colors.white,
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: isStreet ? const Color(0xFFFDE68A) : AppColors.cardBorderSubtle,
+                              width: 1.2,
+                            ),
+                            boxShadow: isStreet ? null : AppColors.cardShadow,
+                          ),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                            child: ExpansionTile(
+                              initiallyExpanded: false,
+                              shape: const Border(),
+                              collapsedShape: const Border(),
+                              tilePadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+                              childrenPadding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+                              iconColor: isStreet ? const Color(0xFFD97706) : AppColors.primaryBlue,
+                              collapsedIconColor: isStreet ? const Color(0xFFD97706) : AppColors.primaryBlue,
+                              title: Text(
+                                PoliticalStreetData.getKeyMeasuresTitle(streetMode: isStreet),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: isStreet ? const Color(0xFF92400E) : AppColors.darkBlue,
+                                ),
+                              ),
+                              children: keyMeasures.map((measure) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 8),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        isStreet ? '👉 ' : '• ',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: isStreet ? const Color(0xFFD97706) : AppColors.primaryBlue,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          measure,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            height: 1.4,
+                                            color: isStreet ? const Color(0xFF78350F) : AppColors.textPrimary,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                           ),
                         ),
                       ],

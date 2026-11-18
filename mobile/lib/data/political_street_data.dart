@@ -256,6 +256,518 @@ class PoliticalStreetData {
         : "🔥 C'est qui le pélo ?";
   }
 
+  /// Retourne le titre de la section des promesses/mesures phares
+  static String getKeyMeasuresTitle({required bool streetMode}) {
+    return streetMode ? '🔥 Le baratin pour être élu :' : '🏛️ Mesures phares du programme';
+  }
+
+  /// Retourne les mesures phares d'un candidat selon le mode (Classique ou Rue)
+  static List<String> getCandidateKeyMeasures(String candidateName, {required bool streetMode}) {
+    final norm = normalize(candidateName);
+    for (final entry in _candidateKeyMeasures.entries) {
+      if (norm.contains(normalize(entry.key)) || normalize(entry.key).contains(norm)) {
+        return streetMode ? entry.value['rue']! : entry.value['classique']!;
+      }
+    }
+    if (streetMode) {
+      return [
+        "Faire des promesses alléchantes pour capter l'attention des électeurs",
+        "Assurer que tout va changer dès le premier jour du mandat",
+        "Jurer la main sur le cœur que le programme sera financé sans hausse d'impôts",
+      ];
+    } else {
+      return [
+        "Modernisation de l'action publique et simplification administrative",
+        "Défense du pouvoir d'achat et valorisation du travail",
+        "Transition écologique équilibrée et souveraineté nationale",
+      ];
+    }
+  }
+
+  // ─── MESURES PHARES DES CANDIDATS (CLASSIQUE & MODE RUE) ─────────────────
+  static final Map<String, Map<String, List<String>>> _candidateKeyMeasures = {
+    'edouard philippe': {
+      'classique': [
+        "Report de l'âge légal de départ à la retraite à 67 ans pour rééquilibrer les comptes",
+        "Réduction drastique des dépenses publiques et suppression d'échelons administratifs",
+        "Grande loi de décentralisation pour donner une vraie liberté d'action aux maires",
+      ],
+      'rue': [
+        "Te faire bosser jusqu'à 67 piges pour 'sauver la caisse' (bon courage pour tes lombaires)",
+        "Couper dans les budgets publics et virer des couches de paperasse",
+        "Lâcher les rênes aux maires pour qu'ils gèrent sans que Paris vienne faire la morale",
+      ],
+    },
+    'marine le pen': {
+      'classique': [
+        "Instauration de la priorité nationale pour l'attribution des logements sociaux et des aides",
+        "Baisse de la TVA de 20% à 5,5% sur les énergies (carburants, fioul, gaz, électricité)",
+        "Expulsion systématique des délinquants et criminels de nationalité étrangère",
+      ],
+      'rue': [
+        "Priorité absolue aux Français pour les HLM et les allocs",
+        "TVA réduite à 5,5% sur le plein d'essence et le chauffage pour que tu banques moins",
+        "Avion direct pour tous les étrangers qui foutent le bazar ou dealent dans la tess",
+      ],
+    },
+    'jean-luc melenchon': {
+      'classique': [
+        "Revalorisation immédiate du SMIC net à 1 600 € et blocage des prix des biens de première nécessité",
+        "Rétablissement de la retraite à 60 ans avec 40 annuités de cotisation",
+        "Convocation d'une assemblée constituante pour fonder la 6e République citoyenne",
+      ],
+      'rue': [
+        "Le SMIC direct à 1600 balles net et les prix des courses bloqués par décret",
+        "La quille à 60 piges pour tout le monde avec 40 annuités, rideau le taff",
+        "Dégager la 5e République à la poubelle et laisser le peuple écrire les nouvelles règles",
+      ],
+    },
+    'gabriel attal': {
+      'classique': [
+        "Généralisation de la tenue unique à l'école et renforcement de l'autorité des professeurs",
+        "Conditionnement du RSA à 15 heures d'activité ou formation par semaine",
+        "Allègement des cotisations sur les salaires moyens pour débloquer les promotions",
+      ],
+      'rue': [
+        "Uniforme obligatoire pour tous les minots à l'école et respect absolu des profs",
+        "15 heures de taff obligatoire par semaine sinon ton RSA saute",
+        "Moins de taxes sur les salaires intermédiaires pour arrêter de smicardiser le pays",
+      ],
+    },
+    'laurent wauquiez': {
+      'classique': [
+        "Plafonnement global de l'ensemble des aides sociales nettement sous le SMIC",
+        "Baisse massive des impôts sur les successions et donations familiales",
+        "Peines planchers automatiques et fermes contre les récidivistes et narcotrafiquants",
+      ],
+      'rue': [
+        "Plafonner les allocs pour que personne touche plus en restant posé qu'en allant bosser",
+        "Virer les taxes sur les héritages pour garder l'argent dans la famille",
+        "Prison ferme directe pour les récidivistes et les dealers, zéro négociation",
+      ],
+    },
+    'bruno retailleau': {
+      'classique': [
+        "Rétablissement du délit de séjour irrégulier et suppression de l'Aide Médicale d'État (AME)",
+        "Exécution systématique de courtes peines de prison dès la première agression",
+        "Restauration stricte de l'autorité régalienne et de la laïcité républicaine",
+      ],
+      'rue': [
+        "Supprimer l'AME gratuite pour les sans-papiers et expulser sans attendre",
+        "La taule immédiate dès le premier faux pas, tolérance zéro pour les délinquants",
+        "Remettre les flics et l'autorité au centre du jeu sans bégayer",
+      ],
+    },
+    'francois ruffin': {
+      'classique': [
+        "Plafonnement strict des écarts de rémunération de 1 à 20 dans les entreprises",
+        "Taxe exceptionnelle sur les superprofits et dividendes des multinationales",
+        "Conditionnement écologique et social de toutes les aides publiques aux entreprises",
+      ],
+      'rue': [
+        "Bloquer les salaires indécents des grands patrons à 20 fois le salaire le plus bas",
+        "Faire cracher les multinationales qui ont gavé leurs actionnaires pendant les crises",
+        "Obliger les boîtes à produire en France sous peine de leur couper les subventions",
+      ],
+    },
+    'fabien roussel': {
+      'classique': [
+        "Relance massive du programme nucléaire civil avec 14 nouveaux réacteurs EPR",
+        "Baisse des factures d'énergie via la sortie du marché européen de l'électricité",
+        "Plan Marshall pour les services publics dans la ruralité et les banlieues",
+      ],
+      'rue': [
+        "Du nucléaire français à fond la caisse pour plus jamais dépendre du gaz des autres",
+        "Quitter le marché européen pour que la facture d'électricité redevienne abordable",
+        "Réouvrir des postes, des gares et des centres de santé là où l'État a déserté",
+      ],
+    },
+    'marine tondelier': {
+      'classique': [
+        "Interdiction des projets écocides, mégabassines et autoroutes inutiles",
+        "ISF climatique et taxation lourde des patrimoines des plus grands pollueurs",
+        "Rénovation thermique intégrale des passoires énergétiques financée par l'État",
+      ],
+      'rue': [
+        "Interdire direct les mégabassines et les gros chantiers d'autoroute qui détruisent la nature",
+        "Taper lourdement dans le portefeuille des ultra-riches qui polluent en jet privé",
+        "Isolation gratuite des apparts mal chauffés pour que tu te gèles plus en hiver",
+      ],
+    },
+    'david lisnard': {
+      'classique': [
+        "Plan d'économies de 60 milliards d'euros pour réduire la dette publique",
+        "Suppression des doublons administratifs et des agences étatiques inutiles",
+        "Autonomie fiscale et liberté de gestion renforcée pour les communes",
+      ],
+      'rue': [
+        "Couper 60 milliards dans les dépenses de l'État pour arrêter de vivre à crédit",
+        "Dégager la paperasse inutile et les agences publiques qui servent à rien",
+        "Laisser les maires décider sur leur territoire sans que les ministères leur dictent tout",
+      ],
+    },
+    'karim bouamrane': {
+      'classique': [
+        "Sécurité du quotidien renforcée avec présence policière accrue dans les quartiers",
+        "Pacte républicain pour l'excellence scolaire et le mentorat des jeunes en banlieue",
+        "Attractivité économique combinant justice sociale et soutien aux entreprises",
+      ],
+      'rue': [
+        "Sécurité sans trembler dans les quartiers et flics visibles sur le terrain",
+        "Mettre le paquet sur les écoles des banlieues pour que les jeunes visent les sommets",
+        "Attirer le business et l'emploi dans les ter-ter sans renier la solidarité",
+      ],
+    },
+    'olivier faure': {
+      'classique': [
+        "Augmentation coordonnée des salaires et conditionnement des aides aux entreprises",
+        "Reconstruction de l'hôpital public avec revalorisation substantielle des soignants",
+        "Rétablissement d'un impôt de solidarité sur la fortune (ISF) national et européen",
+      ],
+      'rue': [
+        "Forcer les patrons à augmenter les salaires s'ils veulent toucher des aides de l'État",
+        "Sauver l'hôpital public en payant décemment les infirmières et soignants",
+        "Remettre l'ISF pour faire participer les grosses fortunes à l'effort collectif",
+      ],
+    },
+    'eric zemmour': {
+      'classique': [
+        "Arrêt total de l'immigration et suppression du droit du sol et du regroupement familial",
+        "Démantèlement des zones de non-droit et expulsion des criminels étrangers",
+        "Suppression intégrale des droits de succession jusqu'à 200 000 euros par enfant",
+      ],
+      'rue': [
+        "Zéro visa, zéro clandestin et fin du droit du sol direct",
+        "Nettoyage intégral des cités et expulsion immédiate de tous les délinquants sans papiers",
+        "Zéro taxe d'héritage jusqu'à 200 000 balles pour transmettre aux enfants",
+      ],
+    },
+    'francois asselineau': {
+      'classique': [
+        "Activation immédiate de l'article 50 du TUE pour la sortie de l'Union européenne (Frexit)",
+        "Sortie du commandement intégré de l'OTAN pour recouvrer l'indépendance militaire",
+        "Rétablissement de la Banque de France et d'une monnaie nationale souveraine",
+      ],
+      'rue': [
+        "Claquer la porte de l'UE (Frexit) sans demander la permission à Bruxelles",
+        "Dégager de l'OTAN pour éviter d'être entraîné dans les guerres des Américains",
+        "Reprendre le contrôle de notre monnaie et de notre banque centrale",
+      ],
+    },
+    'teddy riner': {
+      'classique': [
+        "Généralisation d'une heure de sport quotidienne obligatoire dans tous les cycles scolaires",
+        "Plan national de prévention santé et lutte contre la sédentarité chez les jeunes",
+        "Rassemblement citoyen transpartisan au-delà des querelles politiciennes",
+      ],
+      'rue': [
+        "Une heure de sport par jour pour tous les gosses, interdiction de rester avachi",
+        "La santé par le mouvement pour éviter de saturer les hôpitaux",
+        "Envoyer valser les embrouilles gauche-droite et jouer collectif comme aux JO",
+      ],
+    },
+    'francis lalanne': {
+      'classique': [
+        "Instauration du Référendum d'Initiative Citoyenne (RIC) constituant en toutes matières",
+        "Révocation possible de tous les élus en cours de mandat par vote populaire",
+        "Refus des traités supranationaux et souveraineté absolue du peuple français",
+      ],
+      'rue': [
+        "Le RIC pour que le peuple vote lui-même toutes les lois importantes",
+        "Pouvoir virer un président ou un député en plein mandat s'il trahit ses promesses",
+        "Envoyer balader les technocrates mondiaux et redonner tout le pouvoir direct aux gens",
+      ],
+    },
+    'juan branco': {
+      'classique': [
+        "Destitution des élites économiques et saisie des capitaux oligarchiques",
+        "Abolition des privilèges parlementaires et rémunération des élus au SMIC",
+        "Réécriture citoyenne complète de la constitution par tirage au sort",
+      ],
+      'rue': [
+        "Confisquer les pactoles des milliardaires qui contrôlent les médias et l'État",
+        "Payer les députés et ministres au SMIC pour qu'ils sachent enfin ce que c'est que galérer",
+        "Tirer les représentants du peuple au sort et renverser l'oligarchie",
+      ],
+    },
+    'natacha polony': {
+      'classique': [
+        "Grand plan de réindustrialisation souveraine sous contrôle stratégique de l'État",
+        "Refondation de l'école républicaine avec retour à la transmission des savoirs fondamentaux",
+        "Diplomatie d'équilibre rejetant l'alignement atlantiste ou sino-russe",
+      ],
+      'rue': [
+        "Rouvrir nos usines et fabriquer nos bails en France au lieu de tout importer d'Asie",
+        "Arrêter de brader le niveau scolaire : dictée, calcul et exigence pour tous les élèves",
+        "Faire respecter la voix de la France dans le monde sans faire le caniche des USA",
+      ],
+    },
+    'nicolas dupont-aignan': {
+      'classique': [
+        "Rétablissement des frontières nationales et sortie des accords de Schengen",
+        "Baisse de 50 milliards des impôts sur les classes moyennes et PME",
+        "Priorité d'attribution de la commande publique aux entreprises françaises",
+      ],
+      'rue': [
+        "Fermer les frontières et contrôler tout le monde à l'entrée comme au bon vieux temps",
+        "Alléger les taxes sur les smicards et les petits artisans qui triment",
+        "Obliger les mairies et l'État à acheter français plutôt que chinois",
+      ],
+    },
+    'dominique de villepin': {
+      'classique': [
+        "Retour à une diplomatie gaulliste indépendante, passerelle entre le Nord et le Sud",
+        "Pacte républicain pour l'égalité des chances et la cohésion nationale",
+        "Plan de réarmement de l'autorité publique et soutien aux corps intermédiaires",
+      ],
+      'rue': [
+        "Faire entendre la voix indépendante de la France dans le monde sans suivre aveuglément les blocs",
+        "Remettre de la justice sociale et calmer les tensions entre les communautés",
+        "Restaurer le prestige de l'État et l'autorité républicaine sans brutalité",
+      ],
+    },
+    'nathalie arthaud': {
+      'classique': [
+        "Interdiction totale des licenciements collectifs pour les entreprises bénéficiaires",
+        "Indexation automatique des salaires et pensions sur l'inflation réelle",
+        "Ouverture des livres de comptes des entreprises sous contrôle des travailleurs",
+      ],
+      'rue': [
+        "Interdire direct aux patrons de licencier dès qu'ils font du bénéfice",
+        "Augmenter les salaires automatiquement dès que les prix augmentent au supermarché",
+        "Mettre le nez des ouvriers dans les comptes secrets des boîtes pour voir où part la thune",
+      ],
+    },
+    'florian philippot': {
+      'classique': [
+        "Sortie unilatérale de l'Union européenne et de la monnaie unique (Frexit)",
+        "Interdiction définitive de toute mesure d'exception sanitaire ou de pass numérique",
+        "Sortie de la France des accords de l'OMS et de l'OTAN",
+      ],
+      'rue': [
+        "Frexit direct et retour au franc pour ne plus recevoir d'ordres de Bruxelles",
+        "Interdire à tout jamais les pass sanitaires, confinements et contrôles numériques",
+        "Quitter l'OMS et l'OTAN pour retrouver une souveraineté totale",
+      ],
+    },
+    'delphine batho': {
+      'classique': [
+        "Adoption d'un plan de décroissance concertée pour préserver les ressources vitales",
+        "Moratoire immédiat sur l'artificialisation des sols et sanctuarisation de l'eau potable",
+        "Interdiction de la publicité pour les produits climaticides et surconsommateurs",
+      ],
+      'rue': [
+        "Planifier la décroissance : produire moins de trucs inutiles pour sauver ce qu'il reste de la planète",
+        "Arrêter de bétonner les terres agricoles et protéger l'eau potable comme de l'or",
+        "Interdire la pub qui te pousse à acheter des bails polluants dont t'as pas besoin",
+      ],
+    },
+    'clementine autain': {
+      'classique': [
+        "Planification écologique d'urgence et droit au logement garanti et opposable",
+        "Grand ministère des Droits des femmes doté d'un budget d'un milliard d'euros",
+        "Gratuité des transports en commun du quotidien et des cantines scolaires",
+      ],
+      'rue': [
+        "Droit au logement pour tous et réquisition des apparts vides des spéculateurs",
+        "Un milliard direct pour protéger les femmes contre les violences et l'injustice",
+        "Transports et cantines scolaires 100% gratuits pour soulager les familles",
+      ],
+    },
+    'francois bayrou': {
+      'classique': [
+        "Instauration de la représentation proportionnelle aux élections législatives",
+        "Règle d'or budgétaire constitutionnelle pour stopper l'emballement de la dette",
+        "Pacte pour la jeunesse avec investissement prioritaire dans l'enseignement supérieur",
+      ],
+      'rue': [
+        "Mettre la proportionnelle pour que tous les partis aient des députés à l'Assemblée",
+        "Bloquer la dette publique dans la Constitution pour arrêter de creuser le trou",
+        "Mettre les moyens sur la fac et la formation des jeunes pour leur assurer un vrai avenir",
+      ],
+    },
+    'raphael glucksmann': {
+      'classique': [
+        "Renforcement de l'Europe de la défense et soutien inconditionnel aux démocraties menacées",
+        "Taxation européenne des superprofits et des patrimoines des ultra-riches",
+        "Protectionnisme écologique aux frontières de l'Europe face au dumping chinois",
+      ],
+      'rue': [
+        "Créer une vraie armée européenne pour tenir tête aux dictateurs sans trembler",
+        "Taxer les multinationales et les milliardaires à l'échelle de toute l'Europe",
+        "Taxer lourdement les produits chinois qui ne respectent pas l'environnement",
+      ],
+    },
+    'segolene royal': {
+      'classique': [
+        "Démocratie participative locale avec jurys citoyens tirés au sort",
+        "Ordre républicain juste avec encadrement militaire des jeunes délinquants",
+        "Mix énergétique équilibré conciliant relance du renouvelable et maîtrise du nucléaire",
+      ],
+      'rue': [
+        "Faire voter les citoyens directement via des jurys de quartier pour les décisions locales",
+        "Encadrement militaire strict pour recadrer les jeunes qui partent en vrille",
+        "Du solaire et de l'éolien partout sans cramer tout le budget dans l'électricité",
+      ],
+    },
+    'xavier bertrand': {
+      'classique': [
+        "Prime au travail avec écart minimal garanti de 500 € entre revenus d'activité et allocations",
+        "Défiscalisation intégrale de toutes les heures supplémentaires",
+        "Rétablissement de la double peine et peines automatiques pour les agresseurs de policiers",
+      ],
+      'rue': [
+        "500 balles d'écart minimum garanti entre celui qui bosse et celui qui touche les aides",
+        "Zéro impôt sur les heures sup : tout ce que tu fais en plus va net dans ta poche",
+        "Peine maximale automatique pour quiconque touche à un flic ou un pompier",
+      ],
+    },
+    'bernard cazeneuve': {
+      'classique': [
+        "Réarmement budgétaire et matériel de la police, de la gendarmerie et de la justice",
+        "Pacte laïque intransigeant et lutte résolue contre tous les séparatismes",
+        "Stabilité institutionnelle et dialogue social réhabilité avec les syndicats",
+      ],
+      'rue': [
+        "Mettre des moyens massifs pour la police et la justice pour rétablir l'ordre républicain",
+        "Laïcité ferme et zéro compromis avec les dérives religieuses ou séparatistes",
+        "Gouverner avec sérieux et écouter les syndicats au lieu de passer en force",
+      ],
+    },
+    'philippe poutou': {
+      'classique': [
+        "Semaine de travail de 32 heures sur 4 jours sans perte de salaire",
+        "Interdiction des licenciements et réquisition des entreprises par les salariés",
+        "Expropriation sans indemnité des banques privées et du secteur pharmaceutique",
+      ],
+      'rue': [
+        "Semaine de 32h sur 4 jours payée 35h, le week-end commence le jeudi soir",
+        "Interdire aux patrons de fermer les usines et laisser les salariés reprendre la boîte",
+        "Nationaliser direct les banques et les gros labos pharmaceutiques sans leur donner un centime",
+      ],
+    },
+    'jean lassalle': {
+      'classique': [
+        "Grand plan de sauvetage de la ruralité, de l'artisanat et de l'agriculture paysanne",
+        "Moratoire sur la fermeture des maternités, hôpitaux de proximité et écoles rurales",
+        "Restauration du lien humain et démocratie directe avec Référendum d'Initiative Citoyenne",
+      ],
+      'rue': [
+        "Sauver nos campagnes et nos paysans qui crèvent la faim sous le poids des normes",
+        "Interdiction formelle de fermer la moindre école, maternité ou poste dans les villages",
+        "Le RIC pour que le peuple décide directement sans écouter les technocrates parisiens",
+      ],
+    },
+    'antoine mikolajczak': {
+      'classique': [
+        "Planification scientifique de la transition énergétique combinant nucléaire et renouvelables",
+        "Conditionnement de la fiscalité à l'empreinte carbone réelle des produits",
+        "Gouvernance démocratique basée sur les données scientifiques et l'intérêt des générations futures",
+      ],
+      'rue': [
+        "Combiner nucléaire et énergies vertes de façon rationnelle sans faire de politique politicienne",
+        "Taxer les produits selon leur vraie pollution pour encourager la sobriété",
+        "Écouter les scientifiques et les ingénieurs plutôt que les promesses électorales bidons",
+      ],
+    },
+    'clara egger': {
+      'classique': [
+        "Instauration du RIC constituant et législatif à l'initiative de 100 000 citoyens",
+        "Pouvoir d'abrogation citoyenne des traités internationaux non soumis à référendum",
+        "Remplacement du régime présidentiel par une démocratie directe inspirée de la Suisse",
+      ],
+      'rue': [
+        "Le RIC direct : 100 000 signatures et le peuple vote directement la loi par référendum",
+        "Pouvoir annuler les mauvaises lois et les traités que les politiciens ont signés en douce",
+        "Fini le président tout-puissant, place au modèle suisse où les citoyens ont le dernier mot",
+      ],
+    },
+    'emmanuel maurel': {
+      'classique': [
+        "Reconstruction de la souveraineté industrielle française et fin des traités de libre-échange",
+        "Nationalisation stratégique des secteurs clés : énergie, rail, autoroutes",
+        "République sociale garantissant le pouvoir d'achat face à la mondialisation dérégulée",
+      ],
+      'rue': [
+        "Dégager les traités de libre-échange qui tuent nos usines et nos emplois",
+        "Renationaliser l'énergie, les trains et les autoroutes pour faire baisser les tarifs",
+        "Une gauche patriote et populaire qui défend les travailleurs français sans faiblir",
+      ],
+    },
+    'lydie massard': {
+      'classique': [
+        "Statut d'autonomie pour la Bretagne avec transfert de compétences législatives et fiscales",
+        "Mise en place d'un statut de résident pour réguler la crise du logement sur le littoral",
+        "Reconnaissance et enseignement obligatoire des langues régionales",
+      ],
+      'rue': [
+        "L'autonomie pour la Bretagne : gérer nos lois et nos impôts directement chez nous",
+        "Priorité logement aux locaux pour empêcher les résidences secondaires de tout rafler",
+        "Défendre la langue et la culture bretonne dans toutes les écoles",
+      ],
+    },
+    'sylvain durif': {
+      'classique': [
+        "Instauration d'une gouvernance harmonieuse et universelle axée sur la paix",
+        "Dépassement des clivages partisans traditionnels pour une démocratie de la bienveillance",
+        "Priorité à la préservation de la Terre et à l'élévation des consciences citoyennes",
+      ],
+      'rue': [
+        "Envoyer valser tous les partis politiques traditionnels et instaurer la paix universelle",
+        "Un projet cosmique citoyen sans les magouilles des politiciens de carrière",
+        "Reconnecter les citoyens avec la nature et le bon sens populaire",
+      ],
+    },
+    'olivier becht': {
+      'classique': [
+        "Plan Marshall pour l'exportation et la compétitivité internationale des entreprises françaises",
+        "Allègement massif des charges patronales et des normes pesant sur l'industrie",
+        "Gouvernance pragmatique et transpartisane axée sur l'efficacité économique",
+      ],
+      'rue': [
+        "Aider nos boîtes à vendre leurs produits partout dans le monde pour ramener du cash",
+        "Supprimer le trop-plein de normes et de taxes qui plombent nos usines",
+        "Gérer le pays avec du bon sens économique plutôt qu'avec des idéologies",
+      ],
+    },
+    'philippe brun': {
+      'classique': [
+        "Bouclier tarifaire d'urgence sur l'énergie pour les industries et les ménages",
+        "Conditionnement strict des aides publiques au maintien de l'emploi en France",
+        "Plan de réarmement des services publics dans les territoires périurbains et ruraux",
+      ],
+      'rue': [
+        "Bloquer les prix de l'électricité pour que les usines ne ferment pas et sauvent leurs ouvriers",
+        "Reprendre chaque centime d'aide publique aux boîtes qui délocalisent",
+        "Remettre des services publics partout où les gens se sentent abandonnés",
+      ],
+    },
+    'jerome guedj': {
+      'classique': [
+        "Loi d'urgence Grand Âge et création d'un service public de l'autonomie et des EHPAD",
+        "Refondation du financement de la Sécurité sociale et remboursement à 100% des soins essentiels",
+        "Pacte républicain intransigeant sur la laïcité et l'universalisme",
+      ],
+      'rue': [
+        "Créer un vrai service public pour nos aînés pour en finir avec les scandales des EHPAD privés",
+        "Rembourser les soins de santé à 100% pour que personne ne renonce à se soigner",
+        "Laïcité ferme et égalité républicaine pour tout le monde sans passe-droit",
+      ],
+    },
+    'mira markovic': {
+      'classique': [
+        "Inscription de la protection animale et de la sensibilité du vivant dans la Constitution",
+        "Interdiction définitive de l'élevage intensif en cage et des abattages sans étourdissement",
+        "Transition vers une alimentation végétale encouragée par la commande publique",
+      ],
+      'rue': [
+        "Mettre la protection animale dans la Constitution pour punir sévèrement les maltraitances",
+        "Fermer définitivement les élevages intensifs en cage et les abattoirs de la honte",
+        "Développer les repas végétaux dans les cantines scolaires pour respecter les animaux",
+      ],
+    },
+  };
+
   /// Retourne le résumé Mode Rue d'un candidat
   static String getCandidateStreetSummary(String candidateName, {String? defaultDescription}) {
     final norm = normalize(candidateName);

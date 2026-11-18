@@ -13,6 +13,7 @@ import 'dart:collection';
 import '../services/api_client.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/report_error_dialog.dart';
+import '../widgets/law_deep_dive_dialog.dart';
 
 class LawDetailScreen extends StatelessWidget {
   final Law law;
@@ -649,6 +650,45 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                 ),
               ),
             ),
+          // Bouton "Approfondir le sujet" : visible quand le résumé est déplié
+          if (_isSummaryExpanded) ...[
+            const SizedBox(height: 12),
+            InkWell(
+              onTap: _showDeepDiveDialog,
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+                decoration: BoxDecoration(
+                  color: isStreetActive ? const Color(0xFFFEF3C7) : const Color(0xFFEFF6FF),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isStreetActive ? const Color(0xFFFDE68A) : const Color(0xFFBFDBFE),
+                    width: 1.2,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      isStreetActive ? Icons.local_fire_department_rounded : Icons.auto_awesome,
+                      size: 16,
+                      color: isStreetActive ? const Color(0xFFB45309) : AppColors.primaryBlue,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      isStreetActive ? '🔥 Approfondir le bail' : '🔍 Approfondir le sujet',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: isStreetActive ? const Color(0xFFB45309) : AppColors.primaryBlue,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
           if (widget.law.officialUrl != null || widget.law.latestTextUrl != null) ...[
             const SizedBox(height: 16),
             Center(
@@ -1224,6 +1264,16 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
       decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(20)),
       child: Text('$label ($count)',
         style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: textColor)),
+    );
+  }
+
+  void _showDeepDiveDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => LawDeepDiveDialog(
+        law: widget.law,
+        initialStreetMode: _isStreetMode,
+      ),
     );
   }
 
