@@ -618,7 +618,7 @@ class _SurveysScreenState extends State<SurveysScreen> {
                                     ),
                                   Expanded(
                                     child: Text(
-                                      isStreet ? '🔥 Le bail du parti :' : '🏛️ À propos de : ${candidate.party}',
+                                      isStreet ? 'Le bail du parti :' : 'À propos de : ${candidate.party}',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13,
@@ -675,7 +675,7 @@ class _SurveysScreenState extends State<SurveysScreen> {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        isStreet ? '👉 ' : '• ',
+                                        '• ',
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,

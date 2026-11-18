@@ -249,16 +249,16 @@ class PoliticalStreetData {
   /// "C'est qui le pélo ?" (homme) ou "C'est qui la gadji ?" (femme) en Mode Rue
   static String getCandidateProfileTitle(String candidateName, {required bool streetMode}) {
     if (!streetMode) {
-      return '🏛️ Synthèse du candidat';
+      return 'Synthèse du candidat';
     }
     return isFemaleCandidate(candidateName)
-        ? "🔥 C'est qui la gadji ?"
-        : "🔥 C'est qui le pélo ?";
+        ? "C'est qui la gadji ?"
+        : "C'est qui le pélo ?";
   }
 
   /// Retourne le titre de la section des promesses/mesures phares
   static String getKeyMeasuresTitle({required bool streetMode}) {
-    return streetMode ? '🔥 Le baratin pour être élu :' : '🏛️ Mesures phares du programme';
+    return streetMode ? 'Le baratin pour être élu :' : 'Mesures phares du programme';
   }
 
   /// Retourne les mesures phares d'un candidat selon le mode (Classique ou Rue)
