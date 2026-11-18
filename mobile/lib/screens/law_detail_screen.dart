@@ -671,7 +671,7 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      isStreetActive ? Icons.local_fire_department_rounded : Icons.auto_awesome,
+                      Icons.auto_awesome,
                       size: 16,
                       color: isStreetActive ? const Color(0xFFB45309) : AppColors.primaryBlue,
                     ),

@@ -165,7 +165,7 @@ class _LawDeepDiveDialogState extends State<LawDeepDiveDialog> {
               ),
             ),
             child: Icon(
-              _isStreetMode ? Icons.local_fire_department_rounded : Icons.auto_awesome,
+              Icons.auto_awesome,
               color: _isStreetMode ? const Color(0xFFD97706) : AppColors.primaryBlue,
               size: 20,
             ),
