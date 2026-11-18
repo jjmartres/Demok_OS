@@ -618,7 +618,7 @@ class _SurveysScreenState extends State<SurveysScreen> {
                                     ),
                                   Expanded(
                                     child: Text(
-                                      isStreet ? 'Le bail du parti :' : 'À propos de : ${candidate.party}',
+                                      isStreet ? 'Le bail du parti :' : 'À propos du parti :',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13,
