@@ -188,6 +188,74 @@ class PoliticalStreetData {
         .trim();
   }
 
+  // ─── CANDIDATES FEMININES ──────────────────────────────────────────────
+  static final Set<String> _femaleFullNames = {
+    'marine le pen',
+    'marine tondelier',
+    'natacha polony',
+    'nathalie arthaud',
+    'delphine batho',
+    'clementine autain',
+    'segolene royal',
+    'clara egger',
+    'lydie massard',
+    'mira markovic',
+    'valerie pecresse',
+    'sandrine rousseau',
+    'sarah knafo',
+    'marion marechal',
+    'carole delga',
+    'yael braun pivet',
+    'rachida dati',
+    'mathilde panot',
+    'rima hassan',
+    'anne hidalgo',
+    'christiane taubira',
+    'lucie castets',
+    'helene geoffroy',
+    'aurore berge',
+    'prisca thevenot',
+    'agnes pannier runacher',
+    'amelie de montchalin',
+    'elisabeth borne',
+  };
+
+  static final Set<String> _femaleFirstNames = {
+    'marine', 'natacha', 'nathalie', 'delphine', 'clementine', 'segolene', 'clara',
+    'lydie', 'mira', 'valerie', 'sandrine', 'sarah', 'marion', 'carole', 'yael',
+    'rachida', 'mathilde', 'rima', 'anne', 'christiane', 'lucie', 'helene',
+    'aurore', 'prisca', 'agnes', 'amelie', 'elisabeth', 'florence', 'charlotte',
+    'celine', 'julie', 'juliette', 'sophie', 'marie', 'martine', 'isabelle',
+    'catherine', 'laurence', 'lea', 'chloe', 'emma', 'manon', 'eva', 'elodie',
+    'virginie', 'stephanie', 'corinne', 'sylvie', 'monique', 'nicole', 'francoise',
+  };
+
+  /// Détermine si un candidat est une femme
+  static bool isFemaleCandidate(String candidateName) {
+    final norm = normalize(candidateName);
+    for (final female in _femaleFullNames) {
+      if (norm.contains(female) || female.contains(norm)) {
+        return true;
+      }
+    }
+    final parts = norm.split(' ');
+    if (parts.isNotEmpty && _femaleFirstNames.contains(parts.first)) {
+      return true;
+    }
+    return false;
+  }
+
+  /// Retourne le titre de la section profil selon le mode et le genre :
+  /// "C'est qui le pélo ?" (homme) ou "C'est qui la gadji ?" (femme) en Mode Rue
+  static String getCandidateProfileTitle(String candidateName, {required bool streetMode}) {
+    if (!streetMode) {
+      return '🏛️ Synthèse du candidat';
+    }
+    return isFemaleCandidate(candidateName)
+        ? "🔥 C'est qui la gadji ?"
+        : "🔥 C'est qui le pélo ?";
+  }
+
   /// Retourne le résumé Mode Rue d'un candidat
   static String getCandidateStreetSummary(String candidateName, {String? defaultDescription}) {
     final norm = normalize(candidateName);

@@ -90,10 +90,19 @@ class Candidate {
       "solution democratique": 'assets/images/logos_partis/Solution_Democratique.webp',
       "nous sommes la france": 'assets/images/logos_partis/Nous_Sommes_la_France.svg',
       "trajectoire": 'assets/images/logos_partis/Trajectoire.png',
+      "sans etiquette": 'assets/images/logos_partis/sans_etiquette.svg',
+      "sans-etiquette": 'assets/images/logos_partis/sans_etiquette.svg',
+      "sans parti": 'assets/images/logos_partis/sans_etiquette.svg',
+      "independant": 'assets/images/logos_partis/sans_etiquette.svg',
+      "divers": 'assets/images/logos_partis/sans_etiquette.svg',
+      "citoyen": 'assets/images/logos_partis/sans_etiquette.svg',
+      "": 'assets/images/logos_partis/sans_etiquette.svg',
     };
 
     return partyLogos[normalized];
   }
+
+  static const String sansEtiquetteLogoPath = 'assets/images/logos_partis/sans_etiquette.svg';
 
   bool get isSvgLogo => logoPath?.endsWith('.svg') ?? false;
 

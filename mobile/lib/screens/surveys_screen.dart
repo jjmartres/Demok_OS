@@ -294,6 +294,62 @@ class _SurveysScreenState extends State<SurveysScreen> {
     );
   }
 
+  Widget _buildCandidateListLogo(Candidate candidate, {double size = 60}) {
+    final logo = candidate.logoPath;
+    if (logo != null) {
+      if (candidate.isNetworkLogo) {
+        return candidate.isSvgLogo
+            ? SvgPicture.network(
+                logo,
+                width: size,
+                height: size,
+                fit: BoxFit.contain,
+                placeholderBuilder: (context) => SizedBox(
+                  width: size,
+                  height: size,
+                  child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                ),
+              )
+            : Image.network(
+                logo,
+                width: size,
+                height: size,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => SvgPicture.asset(
+                  Candidate.sansEtiquetteLogoPath,
+                  width: size,
+                  height: size,
+                  fit: BoxFit.contain,
+                ),
+              );
+      } else {
+        return candidate.isSvgLogo
+            ? SvgPicture.asset(
+                logo,
+                width: size,
+                height: size,
+                fit: BoxFit.contain,
+              )
+            : Image.asset(
+                logo,
+                width: size,
+                height: size,
+                fit: BoxFit.contain,
+              );
+      }
+    }
+
+    // Aucun logo de parti ou sans parti :
+    // Afficher la petite image / badge "Sans étiquette" au lieu de la photo.
+    // La photo n'apparaît que quand on ouvre la fiche du candidat !
+    return SvgPicture.asset(
+      Candidate.sansEtiquetteLogoPath,
+      width: size,
+      height: size,
+      fit: BoxFit.contain,
+    );
+  }
+
   Widget _buildCandidateCard(Candidate candidate) {
     return Card(
       elevation: 3,
@@ -309,52 +365,7 @@ class _SurveysScreenState extends State<SurveysScreen> {
             children: [
               Expanded(
                 child: Center(
-                  child: candidate.logoPath == null
-                      ? (candidate.fullPhotoUrl != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(30),
-                              child: Image.network(
-                                candidate.fullPhotoUrl!,
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.account_balance, size: 48, color: AppColors.primaryBlue),
-                              ),
-                            )
-                          : const Icon(Icons.account_balance, size: 48, color: AppColors.primaryBlue))
-                      : (candidate.isNetworkLogo
-                          ? (candidate.isSvgLogo
-                              ? SvgPicture.network(
-                                  candidate.logoPath!,
-                                  width: 60,
-                                  height: 60,
-                                  placeholderBuilder: (context) => const SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                                  ),
-                                )
-                              : Image.network(
-                                  candidate.logoPath!,
-                                  width: 60,
-                                  height: 60,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.error, color: Colors.red, size: 30),
-                                ))
-                          : (candidate.isSvgLogo
-                              ? SvgPicture.asset(
-                                  candidate.logoPath!,
-                                  width: 60,
-                                  height: 60,
-                                )
-                              : Image.asset(
-                                  candidate.logoPath!,
-                                  width: 60,
-                                  height: 60,
-                                  fit: BoxFit.contain,
-                                ))),
+                  child: _buildCandidateListLogo(candidate, size: 60),
                 ),
               ),
               const SizedBox(height: 12),
@@ -541,7 +552,7 @@ class _SurveysScreenState extends State<SurveysScreen> {
                               Row(
                                 children: [
                                   Text(
-                                    isStreet ? '🔥 Le profil en Mode Rue' : '🏛️ Synthèse du candidat',
+                                    PoliticalStreetData.getCandidateProfileTitle(candidate.name, streetMode: isStreet),
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 13,
@@ -602,7 +613,7 @@ class _SurveysScreenState extends State<SurveysScreen> {
                                     ),
                                   Expanded(
                                     child: Text(
-                                      isStreet ? '🔥 Le bail du parti : ${candidate.party}' : '🏛️ À propos de : ${candidate.party}',
+                                      isStreet ? '🔥 Le bail du parti :' : '🏛️ À propos de : ${candidate.party}',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13,
@@ -849,49 +860,11 @@ class _SurveysScreenState extends State<SurveysScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-               // Petit Logo ou photo en haut des résultats
-               if (candidate.logoPath != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: candidate.isNetworkLogo
-                        ? (candidate.isSvgLogo
-                            ? SvgPicture.network(
-                                candidate.logoPath!,
-                                height: 30,
-                                fit: BoxFit.contain,
-                              )
-                            : Image.network(
-                                candidate.logoPath!,
-                                height: 30,
-                                fit: BoxFit.contain,
-                              ))
-                        : (candidate.isSvgLogo
-                            ? SvgPicture.asset(
-                                candidate.logoPath!,
-                                height: 30,
-                                fit: BoxFit.contain,
-                              )
-                            : Image.asset(
-                                candidate.logoPath!,
-                                height: 30,
-                                fit: BoxFit.contain,
-                              )),
-                  )
-               else if (candidate.fullPhotoUrl != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.network(
-                        candidate.fullPhotoUrl!,
-                        height: 30,
-                        width: 30,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const SizedBox(height: 8),
-                      ),
-                    ),
-                  ),
+               // Logo du parti (ou Sans étiquette si pas de parti)
+               Padding(
+                 padding: const EdgeInsets.only(bottom: 8.0),
+                 child: _buildCandidateListLogo(candidate, size: 30),
+               ),
               Text(
                 result['name'],
                 textAlign: TextAlign.center,

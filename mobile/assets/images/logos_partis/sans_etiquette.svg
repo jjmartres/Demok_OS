@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect x="4" y="4" width="112" height="112" rx="26" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="3"/>
+  <circle cx="60" cy="40" r="17" fill="#E2E8F0"/>
+  <!-- Tag outline -->
+  <path d="M54 33 C54 31.8 55 30.8 56.2 30.8 L63.8 30.8 C65 30.8 66 31.8 66 33 L66 47 L60 42.5 L54 47 Z" fill="#64748B"/>
+  <!-- Subtle strike-through line -->
+  <line x1="46" y1="49" x2="74" y2="29" stroke="#E11D48" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- Text -->
+  <text x="60" y="76" font-family="sans-serif" font-weight="900" font-size="14" text-anchor="middle" fill="#0F172A" letter-spacing="0.5">SANS</text>
+  <text x="60" y="94" font-family="sans-serif" font-weight="800" font-size="12" text-anchor="middle" fill="#475569" letter-spacing="0.4">ÉTIQUETTE</text>
+</svg>
