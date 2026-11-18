@@ -550,10 +550,32 @@ export class VotesService {
 
         // Si déjà généré et en cache dans la BDD, on renvoie immédiatement (0ms, 0 jeton d'API)
         if (law.summary?.deepDive && law.summaryStreet?.deepDive) {
+            const filterRealFigures = (figs: any[]) => {
+                if (!Array.isArray(figs)) return [];
+                return figs.filter((f: any) => {
+                    if (typeof f !== 'string') return false;
+                    const l = f.toLowerCase().trim();
+                    return !l.startsWith('aucun chiffre') &&
+                           !l.startsWith('aucune date') &&
+                           !l.includes('texte n°') &&
+                           !l.includes('proposition de loi n°') &&
+                           !l.includes('projet de loi n°') &&
+                           !l.startsWith('déposé le') &&
+                           !l.startsWith('adopté le') &&
+                           !l.startsWith('dossier législatif');
+                });
+            };
+
             return {
                 lawId: law.id,
-                classique: law.summary.deepDive,
-                rue: law.summaryStreet.deepDive,
+                classique: {
+                    ...law.summary.deepDive,
+                    keyFigures: filterRealFigures(law.summary.deepDive.keyFigures),
+                },
+                rue: {
+                    ...law.summaryStreet.deepDive,
+                    keyFigures: filterRealFigures(law.summaryStreet.deepDive.keyFigures),
+                },
                 cached: true,
             };
         }
@@ -565,16 +587,12 @@ export class VotesService {
         if (!mistralApiKey) {
             const fallbackClassique = {
                 dailyImpact: `Cette proposition ou ce projet de loi ("${law.titleOfficial}") vise à faire évoluer les règles en vigueur dans son domaine d'application. Ses effets pratiques s'appliqueront aux acteurs et citoyens concernés dès sa promulgation officielle.`,
-                keyFigures: [
-                    "Aucun chiffre ou date clé n'est précisé dans le texte initial."
-                ],
+                keyFigures: [],
                 politicalDebate: "Ce texte fait l'objet de discussions au Parlement entre la majorité et les oppositions sur l'opportunité de la réforme et ses modalités d'application."
             };
             const fallbackRue = {
                 dailyImpact: `En gros, ce texte ("${law.titleVulgarized || law.titleOfficial}") veut bousculer les règles actuelles. Dès que c'est voté et validé, ça va s'appliquer direct sur le terrain pour ceux qui sont concernés.`,
-                keyFigures: [
-                    "Aucun chiffre ou date clé n'est précisé dans le texte initial."
-                ],
+                keyFigures: [],
                 politicalDebate: "Dans l'hémicycle ça débat sec : certains veulent faire passer le bail en vitesse, d'autres montent au créneau pour bloquer ou modifier des articles."
             };
 
@@ -595,9 +613,11 @@ Ta tâche est d'analyser un texte de loi pour produire un DÉCRYPTAGE APPROFONDI
 Axe 1 - Impact Quotidien :
 Explique de manière très concrète, pratique et palpable ce qui change dans la vie de tous les jours du citoyen ordinaire, des salariés, des consommateurs ou des familles si cette loi est appliquée. Pas de jargon abstrait, des situations de vie réelles (3 à 5 phrases).
 
-Axe 2 - Chiffres et Dates Clés :
-RÈGLE D'OR STRICTE ANTI-HALLUCINATION : N'INVENTE AUCUN CHIFFRE NI DATE. Extrais UNIQUEMENT les données numériques, pourcentages, seuils financiers en euros, sanctions, durées ou dates d'application réellement mentionnés dans le texte fourni.
-Si aucun chiffre ou date précise ne figure dans le texte fourni, liste exactement 1 élément : "Aucun chiffre ou date clé n'est précisé dans le texte initial."
+Axe 2 - Chiffres Clés Concrets :
+RÈGLE STRICTE : Extrais UNIQUEMENT les VRAIS CHIFFRES CONCRETS ET QUANTITATIFS ayant un impact direct (montants financiers en euros, amendes, sanctions financières, pourcentages d'augmentation ou de réduction, seuils chiffrés, nombre de bénéficiaires ou de victimes d'abus ciblés, durées concrètes de peines de prison).
+INTERDICTION ABSOLUE : N'inclus AUCUNE métadonnée administrative ou de procédure (ex: numéro de texte de loi, numéro d'article, date de dépôt du texte au Parlement, date d'adoption : cela n'a aucun intérêt pour le citoyen).
+S'il n'y a AUCUN chiffre concret d'impact (montant €, pourcentage, seuil financier) dans le texte fourni, renvoie OBLIGATOIREMENT une liste vide : [] !
+N'invente absolument aucun chiffre.
 
 Axe 3 - Coulisses et Débats Politiques :
 Explique qui défend ce texte (gouvernement, groupe parlementaire, secteur), qui s'y oppose fermement et quels sont les vrais arguments d'affrontement politique ou idéologique (3 à 5 phrases).
@@ -611,16 +631,14 @@ Réponds STRICTEMENT sous ce format JSON :
   "classique": {
     "dailyImpact": "Texte concret de 3 à 5 phrases sur l'impact quotidien.",
     "keyFigures": [
-      "Point clé avec chiffre/date vérifié",
-      "Autre point clé vérifié"
+      "Vrai chiffre ou montant concret vérifié (ou tableau vide [] si aucun)"
     ],
     "politicalDebate": "Texte expliquant les positions politiques et les points de friction."
   },
   "rue": {
     "dailyImpact": "Le topo sur ce qui change direct dans ta vie de tous les jours en langage de rue.",
     "keyFigures": [
-      "Point clé en mode rue avec chiffre/date vérifié",
-      "Autre point clé en mode rue"
+      "Vrai chiffre ou montant concret vérifié en mode rue (ou tableau vide [] si aucun)"
     ],
     "politicalDebate": "Qui valide le bail, qui a le seum, et pourquoi ça clashe dans l'hémicycle."
   }
@@ -681,13 +699,13 @@ Réponds STRICTEMENT sous ce format JSON :
             return {
                 lawId: law.id,
                 classique: {
-                    dailyImpact: `Ce texte ("${law.titleOfficial}") établit un cadre juridique précis destiné à s'appliquer directement aux secteurs concernés.`,
-                    keyFigures: ["Aucun chiffre ou date clé n'est précisé dans le texte initial."],
-                    politicalDebate: "Les débats au Parlement portent sur l'équilibre entre les objectifs poursuivis par le texte et les contraintes imposées."
+                    dailyImpact: `Ce texte ("${law.titleOfficial}") établit un cadre juridique destiné à s'appliquer directement aux secteurs concernés dès son entrée en vigueur.`,
+                    keyFigures: [],
+                    politicalDebate: "Les débats au Parlement portent sur l'équilibre entre les objectifs poursuivis par le texte et ses modalités de mise en œuvre."
                 },
                 rue: {
                     dailyImpact: `Ce bail ("${law.titleVulgarized || law.titleOfficial}") pose de nouvelles règles qui vont impacter direct les personnes et structures concernées.`,
-                    keyFigures: ["Aucun chiffre ou date clé n'est précisé dans le texte initial."],
+                    keyFigures: [],
                     politicalDebate: "Dans l'hémicycle ça discute fort entre ceux qui veulent pousser la réforme et ceux qui veulent freiner des quatre fers."
                 },
                 cached: false,

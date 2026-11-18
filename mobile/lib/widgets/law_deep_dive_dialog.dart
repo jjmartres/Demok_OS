@@ -140,8 +140,8 @@ class _LawDeepDiveDialogState extends State<LawDeepDiveDialog> {
 
   Widget _buildHeader() {
     final titleText = _isStreetMode
-        ? '🔥 Le décryptage complet du bail'
-        : '🔍 Décryptage approfondi';
+        ? 'J\'t\'explique frérot'
+        : 'Décryptage approfondi';
 
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 12, 12),
@@ -358,6 +358,24 @@ class _LawDeepDiveDialogState extends State<LawDeepDiveDialog> {
       );
     }
 
+    // Filtrer les chiffres clés pour ne conserver que les véritables impacts chiffrés
+    final validKeyFigures = deepDive.keyFigures.where((fig) {
+      final trimmed = fig.trim();
+      if (trimmed.isEmpty) return false;
+      final lower = trimmed.toLowerCase();
+      if (lower.startsWith('aucun chiffre') ||
+          lower.startsWith('aucune date') ||
+          lower.startsWith('texte n°') ||
+          lower.startsWith('proposition de loi n°') ||
+          lower.startsWith('projet de loi n°') ||
+          lower.startsWith('déposé le') ||
+          lower.startsWith('adopté le') ||
+          lower.startsWith('dossier législatif')) {
+        return false;
+      }
+      return true;
+    }).toList();
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -382,59 +400,51 @@ class _LawDeepDiveDialogState extends State<LawDeepDiveDialog> {
             ),
           ),
 
-          const SizedBox(height: 16),
-
-          // 2. Chiffres & Dates Clés
-          _buildSectionCard(
-            icon: Icons.pin_drop_rounded,
-            iconColor: const Color(0xFFD97706),
-            bgColor: const Color(0xFFFFFBEB),
-            borderColor: const Color(0xFFFDE68A),
-            title: _isStreetMode
-                ? '📊 Les chiffres chauds du texte'
-                : '📊 Chiffres & dates clés du texte',
-            content: deepDive.keyFigures.isEmpty
-                ? const Text(
-                    'Aucun chiffre ou date clé explicité dans le texte.',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontStyle: FontStyle.italic,
-                      color: Color(0xFF78350F),
-                    ),
-                  )
-                : Column(
-                    children: deepDive.keyFigures.map((fig) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(top: 2),
-                              child: Icon(
-                                Icons.check_circle_rounded,
-                                size: 16,
-                                color: Color(0xFFD97706),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                fig,
-                                style: const TextStyle(
-                                  fontSize: 13,
-                                  height: 1.45,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF78350F),
-                                ),
-                              ),
-                            ),
-                          ],
+          // 2. Chiffres Clés (affiché uniquement s'il y a de véritables chiffres concrets)
+          if (validKeyFigures.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _buildSectionCard(
+              icon: Icons.pin_drop_rounded,
+              iconColor: const Color(0xFFD97706),
+              bgColor: const Color(0xFFFFFBEB),
+              borderColor: const Color(0xFFFDE68A),
+              title: _isStreetMode
+                  ? '📊 Les chiffres chauds'
+                  : '📊 Les chiffres clés',
+              content: Column(
+                children: validKeyFigures.map((fig) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.only(top: 2),
+                          child: Icon(
+                            Icons.check_circle_rounded,
+                            size: 16,
+                            color: Color(0xFFD97706),
+                          ),
                         ),
-                      );
-                    }).toList(),
-                  ),
-          ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            fig,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              height: 1.45,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF78350F),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
 
           const SizedBox(height: 16),
 

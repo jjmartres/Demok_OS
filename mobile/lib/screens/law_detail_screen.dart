@@ -677,7 +677,7 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      isStreetActive ? '🔥 Approfondir le bail' : '🔍 Approfondir le sujet',
+                      isStreetActive ? 'Approfondir le bail' : 'Approfondir le sujet',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,

@@ -94,7 +94,7 @@ Réponds UNIQUEMENT avec un objet JSON valide suivant scrupuleusement cette stru
         "arguments_contre": ["Argument 1", "Argument 2"],
         "deepDive": {
             "dailyImpact": "Impact pratique direct sur le quotidien des citoyens ou pros (3 phrases)",
-            "keyFigures": ["Chiffre/date vérifié sans hallucination (ou 'Aucun chiffre clé dans le texte')"],
+            "keyFigures": ["Montant €, pourcentage ou chiffre d'impact concret vérifié (strictement AUCUNE métadonnée administrative comme numéro de texte ou date de dépôt. Si pas de chiffre concret : [])"],
             "politicalDebate": "Qui défend, qui attaque et pourquoi ça clive"
         }
     },
@@ -105,7 +105,7 @@ Réponds UNIQUEMENT avec un objet JSON valide suivant scrupuleusement cette stru
         "arguments_contre": ["Argument 1 rue", "Argument 2 rue"],
         "deepDive": {
             "dailyImpact": "Ce qui change dans ta vie de tous les jours en mode rue (3 phrases)",
-            "keyFigures": ["Chiffre ou date vérifiée en mode rue"],
+            "keyFigures": ["Vrai montant ou chiffre concret d'impact en mode rue (ou [] si aucun)"],
             "politicalDebate": "Qui valide le bail et qui a le seum dans l'hémicycle"
         }
     }
