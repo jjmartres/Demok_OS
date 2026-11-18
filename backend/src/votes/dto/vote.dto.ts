@@ -18,4 +18,5 @@ export interface VoteResponseDto {
         agreement: boolean; // Does user vote match deputy vote?
     };
     xpGains?: Array<{ amount: number; reason: string }>;
+    userVote?: string;
 }

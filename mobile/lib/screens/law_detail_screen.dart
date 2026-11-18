@@ -45,6 +45,9 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
   Map<String, dynamic>? _voteResult;
   bool _isSummaryExpanded = false;
   bool _isStreetMode = false;
+  String? _currentUserVote;
+  bool _isCommunityResultsExpanded = false;
+  final ExpansionTileController _communityResultsController = ExpansionTileController();
   
   // XP Notifications
   final Queue<Map<String, dynamic>> _xpQueue = Queue();
@@ -71,6 +74,7 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
   void initState() {
     super.initState();
     _isStreetMode = UserSession().isStreetModePreferred && (widget.law.summaryStreet != null);
+    _currentUserVote = widget.law.userVote;
     _checkVoteStatus();
     _loadAmendements();
   }
@@ -98,6 +102,9 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
           setState(() {
             _hasVoted = true;
             _voteResult = data;
+            if (data['userVote'] != null) {
+              _currentUserVote = data['userVote'];
+            }
           });
         }
       }
@@ -209,6 +216,17 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
           _hasVoted = true;
           _isModifyingVote = false; // Reset modification mode
           _voteResult = data;
+          _currentUserVote = choice;
+          _isCommunityResultsExpanded = true;
+        });
+
+        // Auto-expand community results accordion
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          try {
+            if (!_communityResultsController.isExpanded) {
+              _communityResultsController.expand();
+            }
+          } catch (_) {}
         });
 
         // Auto-scroll to top so vote results are visible
@@ -750,12 +768,16 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
+          controller: _communityResultsController,
           shape: const Border(),
           collapsedShape: const Border(),
           tilePadding: const EdgeInsets.symmetric(horizontal: 16),
           iconColor: AppColors.primaryBlue,
           collapsedIconColor: AppColors.primaryBlue,
-          initiallyExpanded: false,
+          initiallyExpanded: _isCommunityResultsExpanded,
+          onExpansionChanged: (expanded) {
+            _isCommunityResultsExpanded = expanded;
+          },
           title: Row(
             children: [
               const Icon(Icons.bar_chart_rounded, color: AppColors.primaryBlue, size: 20),
@@ -793,20 +815,21 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
               ),
             ),
             
-            // User vote display
-            if (widget.law.userVote != null)
+            // User vote display (instant feedback via _currentUserVote, or widget.law.userVote)
+            if ((_currentUserVote ?? widget.law.userVote) != null)
               Builder(builder: (context) {
+                final effectiveVote = _currentUserVote ?? widget.law.userVote!;
                 String label;
                 Color bgCol;
                 Color textCol;
                 IconData icon;
 
-                if (widget.law.userVote == 'FOR') {
+                if (effectiveVote == 'FOR') {
                   label = 'Vous avez voté pour';
                   bgCol = AppColors.votePour.withValues(alpha: 0.15);
                   textCol = AppColors.votePour;
                   icon = Icons.thumb_up_rounded;
-                } else if (widget.law.userVote == 'AGAINST') {
+                } else if (effectiveVote == 'AGAINST') {
                   label = 'Vous avez voté contre';
                   bgCol = AppColors.voteContre.withValues(alpha: 0.15);
                   textCol = AppColors.voteContre;

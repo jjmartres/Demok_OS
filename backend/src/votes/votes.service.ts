@@ -174,6 +174,7 @@ export class VotesService {
             statistics,
             deputyVote,
             xpGains,
+            userVote: VoteChoice[dto.choice],
         };
     }
 
@@ -492,6 +493,7 @@ export class VotesService {
             hasVoted: true,
             statistics,
             deputyVote,
+            userVote: choiceEntry.choice,
         };
     }
 
