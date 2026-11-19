@@ -472,7 +472,7 @@ class _LawDeepDiveDialogState extends State<LawDeepDiveDialog> {
           // Mention légale IA
           const Center(
             child: Text(
-              'Généré par Mistral AI sur la base du texte législatif officiel • Démok',
+              'Généré par Mistral AI',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontStyle: FontStyle.italic,

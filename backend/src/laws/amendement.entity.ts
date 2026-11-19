@@ -48,5 +48,5 @@ export class Amendement {
     xmlUrl: string; // URL du fichier XML source (pour enrichissement)
 
     @Column('text', { nullable: true })
-    resume: string; // Résumé factuel 1 ligne généré par Mistral IA
+    resume: string; // Résumé factuel 1 ligne généré par Mistral AI
 }

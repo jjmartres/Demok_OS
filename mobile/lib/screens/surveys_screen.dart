@@ -577,7 +577,7 @@ class _SurveysScreenState extends State<SurveysScreen> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          isStreet ? "Généré par Mistral IA (Style Urbain)" : "Généré par Mistral IA",
+                          "Généré par Mistral AI",
                           style: const TextStyle(
                             fontStyle: FontStyle.italic,
                             color: Colors.grey,
