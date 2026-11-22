@@ -18,11 +18,14 @@ docs/specs.md
 backend/dist/
 backend/node_modules/
 mobile/.dart_tool/
+mobile/.firebase/
 mobile/build/
+mobile/build_log*.txt
+mobile/build_output.txt
 mobile/android/build/
 node_modules/
-package-lock.json
-package.json
+/package-lock.json
+/package.json
 
 # IDE files
 .idea/

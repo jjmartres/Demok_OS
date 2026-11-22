@@ -1,70 +1,63 @@
 # Démok - La Démocratie Collaborative 🗳️
 
-**Démok** est une plateforme citoyenne permettant de suivre, de vulgariser et de voter (de manière anonyme et consultative) sur les lois en cours de discussion au Parlement français.
+**Démok** ([demok.fr](https://demok.fr)) est une application web citoyenne permettant de suivre, de comprendre et de voter (de manière anonyme et consultative) sur les lois en cours de discussion au Parlement français.
 
-L'objectif est de rendre le processus législatif accessible à tous grâce à l'IA, de vulgariser les projets de lois, et de permettre aux citoyens de s'exprimer par le vote.
+L'objectif est de rendre le processus législatif accessible à tous grâce à l'IA, de décoder les textes de lois sans jargon politique, et de permettre aux citoyens de comparer leur vote avec celui des députés.
 
 ---
 
 ## ✨ Fonctionnalités
 
-- **Flux de lois en temps réel** : Ingestion automatique des données de l'Assemblée Nationale.
-- **Vulgarisation par IA** : Utilisation de Mistral AI pour transformer des textes législatifs complexes en résumés clairs avec des arguments "Pour" et "Contre".
-- **Vote Anonyme** : Système de "Double Registre" garantissant l'anonymat total du choix tout en empêchant le multi-vote.
-- **Fiches Députés et Statistiques** : Retrouvez l'historique complet des votes, les présences et les statistiques de chaque député pour suivre son activité à l'Assemblée.
-- **Sondages** : Exprimez-vous sur des thématiques clés de l'actualité politique et sociale.
-- **Gamification** : Gagnez de l'expérience et progressez dans vos niveaux de citoyenneté en participant activement à la vie démocratique.
+- **Flux de lois & amendements en temps réel** : Synchronisation automatique des textes, dossiers législatifs, amendements et scrutins officiels depuis l'Open Data de l'Assemblée Nationale et Légifrance.
+- **Vulgarisation IA à double niveau (Classique & Mode Rue)** : Utilisation de Mistral AI pour résumer chaque texte avec des arguments « Pour » et « Contre » selon deux registres au choix :
+  - 🏛️ **Mode Classique** : Ton neutre, institutionnel et synthétique.
+  - 🔥 **Mode Rue** : Langage direct, familier et décodé sans langue de bois.
+- **Module « Approfondir le sujet »** : Analyse détaillée générée par IA et mise en cache pour chaque loi (contexte, chronologie, chiffres clés sourcés et impacts concrets au quotidien).
+- **Vote Citoyen Anonyme** : Architecture à « Double Registre » (`VoteRegistry` + `VoteChoice`) garantissant l'anonymat mathématique du bulletin tout en empêchant le double vote.
+- **Espace Présidentielle 2027** : Fiches des candidats déclarés ou pressentis, synthèses du profil, présentation du parti et mesures phares du programme (disponibles en Mode Classique et Mode Rue) avec vote consultatif.
+- **Fiches Députés & Gouvernement** : Historique des votes, statistiques de participation de chaque député et trombinoscope actualisé de la composition du Gouvernement.
+- **Gamification Citoyenne** : Système d'expérience (XP) et de niveaux de citoyenneté pour encourager la participation régulière à la vie démocratique.
 
 ---
 
-## 🛠️ Installation (Développement)
+## 🏗️ Architecture Technique
+
+- **Frontend** : Flutter Web (PWA responsive Mobile & Desktop), hébergé sur Firebase Hosting.
+- **Backend** : NestJS (Node.js / TypeScript), TypeORM, Bull (files d'attente asynchrones).
+- **Base de données & Cache** : PostgreSQL 15 & Redis 7 (conteneurisés avec Docker derrière un reverse-proxy Caddy).
+- **Intelligence Artificielle** : API Mistral AI (`mistral-small-latest`) avec mise en cache permanente des synthèses en base de données (`JSONB`).
+- **Sources de données** : Dépôts Open Data de l'Assemblée Nationale & Légifrance.
+
+---
+
+## 🛠️ Installation (Développement local)
 
 ### Pré-requis
 - Docker & Docker Compose
 - Node.js (v18+)
 - Flutter SDK
 
-### 1. Backend
-```bash
-cd backend
-cp .env.example .env
-# Remplissez les clés Mistral et SMTP dans le .env
-npm install
-npm run start:dev
-```
-
-### 2. Base de données
+### 1. Base de données (PostgreSQL & Redis)
 ```bash
 # À la racine du projet
 docker-compose up -d
 ```
 
-### 3. Application (Flutter)
+### 2. Backend (API NestJS)
+```bash
+cd backend
+cp .env.example .env
+# Renseignez votre clé MISTRAL_API_KEY et vos paramètres dans le fichier .env
+npm install
+npm run start:dev
+```
+
+### 3. Frontend (Flutter Web)
 ```bash
 cd mobile
 flutter pub get
-flutter run -d chrome  # Pour tester la version Web
+flutter run -d chrome
 ```
-
----
-
-## 🏗️ Architecture
-
-- **Backend** : NestJS, TypeORM, PostgreSQL, Redis.
-- **Frontend** : Flutter (Web & Mobile).
-- **IA** : Mistral AI API.
-- **Data** : Ingestion via les dépôts Open Data de l'Assemblée Nationale.
-
----
-
-## 🤝 Contribuer
-
-Les contributions sont les bienvenues ! 
-1. Forkez le projet.
-2. Créez votre branche (`git checkout -b feature/AmazingFeature`).
-3. Commitez vos changements (`git commit -m 'Add some AmazingFeature'`).
-4. Pushez sur la branche (`git push origin feature/AmazingFeature`).
-5. Ouvrez une Pull Request.
 
 ---
 
