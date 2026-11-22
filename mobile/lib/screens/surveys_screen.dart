@@ -412,11 +412,11 @@ class _SurveysScreenState extends State<SurveysScreen> {
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setModalState) {
-            final streetSummary = PoliticalStreetData.getCandidateStreetSummary(
+            final displaySummary = PoliticalStreetData.getCandidateSummary(
               candidate.name,
+              streetMode: isStreet,
               defaultDescription: candidate.description,
             );
-            final displaySummary = isStreet ? streetSummary : (candidate.description ?? '');
 
             final partyBio = PoliticalStreetData.getPartyBio(
               candidate.party,

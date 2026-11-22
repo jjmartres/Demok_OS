@@ -122,11 +122,15 @@ export class CandidatesSyncService {
                         }
                     } else {
                         // Création de la nouvelle fiche candidat
+                        const isRoboticDescription = description && (description.startsWith('Fiche de constat') || description.startsWith('Synthèse neutre'));
+                        const cleanDescription = (description && !isRoboticDescription)
+                            ? description
+                            : `${name} est candidat(e) à l'élection présidentielle de 2027.`;
                         const newCandidate = this.candidateRepository.create({
                             name,
                             party,
                             photoUrl,
-                            description: description || `${name} est candidat(e) à l'élection présidentielle de 2027.`,
+                            description: cleanDescription,
                             programUrl: `${this.SITE_BASE_URL}/candidats/${file.name.replace('.md', '')}`,
                             displayOrder: 0,
                         });

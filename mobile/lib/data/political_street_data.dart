@@ -125,6 +125,60 @@ class PoliticalStreetData {
     },
   };
 
+  // ─── RÉSUMÉS CANDIDATS EN MODE CLASSIQUE ────────────────────────────────
+  static final Map<String, String> _candidateClassiqueSummaries = {
+    'edouard philippe': "Ancien Premier ministre, il prône une droite de gouvernement modérée. Ses priorités se concentrent sur le redressement des finances publiques, la fermeté régalienne et la décentralisation des pouvoirs vers les territoires.",
+    'marine le pen': "Figure historique du Rassemblement National, elle défend la priorité nationale dans l'attribution des aides et logements sociaux, le contrôle strict des frontières et le rétablissement de l'autorité régalienne.",
+    'jean-luc melenchon': "Leader de La France Insoumise, il propose le passage à la 6ème République, la retraite à 60 ans, le blocage des prix des biens de première nécessité et la planification écologique.",
+    'gabriel attal': "Ancien Premier ministre issu de la majorité présidentielle, il met l'accent sur la revalorisation du travail, l'autorité républicaine à l'école et la continuité des réformes économiques.",
+    'laurent wauquiez': "Président de région et figure de la droite républicaine, il prône la baisse des dépenses publiques et des impôts, la valorisation du travail face à l'assistanat et la fermeté pénale.",
+    'bruno retailleau': "Ministre de l'Intérieur et figure d'une droite d'ordre, il place au premier plan la maîtrise des flux migratoires, la sévérité judiciaire et la défense intransigeante de la laïcité.",
+    'francois ruffin': "Député engagé auprès des classes populaires et des salariés, il milite pour la réindustrialisation, le plafonnement des hauts salaires et la taxation des superprofits.",
+    'fabien roussel': "Secrétaire national du Parti Communiste Français, il défend le pouvoir d'achat des travailleurs, la relance du nucléaire français et la réappropriation publique des secteurs stratégiques.",
+    'marine tondelier': "Secrétaire nationale des Écologistes, elle place l'urgence climatique et la justice sociale au cœur de son projet, prônant la sortie des énergies fossiles et une fiscalité écologique.",
+    'david lisnard': "Maire de Cannes et président de l'Association des Maires de France, il défend une droite libérale axée sur la débureaucratisation, la réduction de la dépense publique et l'autonomie des maires.",
+    'karim bouamrane': "Maire de Saint-Ouen, il incarne une gauche républicaine et pragmatique, combinant développement économique, sécurité de proximité et excellence éducative dans les quartiers populaires.",
+    'olivier faure': "Premier secrétaire du Parti Socialiste, il plaide pour l'union des gauches autour de la défense des services publics, de la hausse des salaires et d'une transition écologique solidaire.",
+    'eric zemmour': "Président de Reconquête !, il axe sa candidature sur la défense de l'identité et de la civilisation françaises, l'arrêt complet de l'immigration et l'assimilation républicaine.",
+    'francois asselineau': "Président fondateur de l'UPR, il défend le Frexit unilatéral, à savoir la sortie de l'Union européenne, de l'euro et de l'OTAN pour rétablir la souveraineté nationale de la France.",
+    'teddy riner': "Quintuple champion olympique de judo et figure sportive nationale majeure. Hors des appareils partisans, il met en avant les valeurs de dépassement de soi, de cohésion nationale par le sport et d'excellence pour la jeunesse.",
+    'francis lalanne': "Auteur-compositeur et figure contestataire portant le mouvement citoyen France Libre. Il plaide pour une rupture avec le système des partis traditionnels, la primauté du Référendum d'Initiative Citoyenne et la restauration des libertés publiques.",
+    'juan branco': "Avocat, auteur et fondateur du mouvement citoyen Les Ruches. Il propose une refonte radicale des institutions de la République, la destitution des oligarchies financières et médiatiques et une démocratie participative populaire.",
+    'natacha polony': "Journaliste et essayiste souverainiste, fondatrice du mouvement Nous Sommes la France. Elle défend l'indépendance géopolitique de la nation, la réindustrialisation productive et la transmission exigeante des savoirs à l'école républicaine.",
+    'nicolas dupont-aignan': "Président de Debout la France et député de l'Essonne, il défend un gaullisme souverainiste, le patriotisme économique et le contrôle des frontières nationales.",
+    'dominique de villepin': "Ancien Premier ministre et diplomate, il incarne une voix gaulliste indépendante sur la scène internationale, attachée au non-alignement stratégique et au respect du droit international.",
+    'nathalie arthaud': "Porte-parole de Lutte Ouvrière, elle milite pour le renversement du capitalisme, l'expropriation des grands groupes et l'interdiction des licenciements pour garantir l'emploi pour tous.",
+    'florian philippot': "Président des Patriotes, il milite pour la sortie de l'Union européenne (Frexit), la restauration de la souveraineté nationale et la défense des libertés fondamentales.",
+    'delphine batho': "Ancienne ministre de l'Écologie et députée, elle est la théoricienne de la décroissance, prônant la réduction de la surproduction et la protection absolue des ressources naturelles.",
+    'clementine autain': "Députée engagée de la gauche écosocialiste et féministe, elle milite pour un rassemblement populaire unitaire autour de la rupture écologique, de l'égalité réelle et du partage des richesses.",
+    'francois bayrou': "Président du MoDem et figure historique du centre, il milite pour une vie politique apaisée, l'introduction de la proportionnelle, l'équilibre budgétaire et la valorisation de l'école.",
+    'raphael glucksmann': "Député européen et cofondateur de Place Publique, il prône une social-démocratie pro-européenne ferme face aux régimes autoritaires, alliée à une transition écologique financée par les grandes fortunes.",
+    'segolene royal': "Ancienne ministre et candidate présidentielle historique, elle défend une démocratie participative associant écologie pragmatique, ordre républicain juste et écoute citoyenne.",
+    'xavier bertrand': "Président de la région Hauts-de-France, il porte la vision d'une droite sociale et territoriale, mettant l'accent sur la valeur travail, la sécurité du quotidien et les services de proximité.",
+    'bernard cazeneuve': "Ancien Premier ministre et ministre de l'Intérieur, il incarne une gauche républicaine de gouvernement attachée à l'autorité de l'État, à la laïcité et au sérieux budgétaire.",
+    'philippe poutou': "Ouvrier de l'industrie automobile et porte-parole du NPA, il porte la voix des luttes syndicales, la défense de l'emploi ouvrier et la rupture avec le système capitaliste.",
+    'jean lassalle': "Ancien député et fondateur de Résistons !, il défend l'authenticité de la France rurale, la proximité avec les citoyens et la sauvegarde des terroirs et des communes.",
+    'antoine mikolajczak': "Ingénieur et candidat investi par le parti écologiste et scientifique Équinoxe. Il défend une transition énergétique méthodique et rationnelle associant relance du nucléaire et essor maîtrisé des énergies renouvelables.",
+    'clara egger': "Enseignante-chercheuse en sciences politiques et porte-parole du mouvement Solution Démocratique. Elle axe son engagement sur la démocratie directe et l'instauration du Référendum d'Initiative Citoyenne (RIC) constituant inspiré du modèle suisse.",
+    'emmanuel maurel': "Député européen et représentant de la Gauche Républicaine et Socialiste (GRS). Il milite pour une gauche républicaine, souverainiste et laïque, axée sur la réindustrialisation productive et la défense des services publics.",
+    'lydie massard': "Élue régionale et militante de l'Union Démocratique Bretonne (UDB). Elle milite pour une large décentralisation, la reconnaissance des identités régionales, la protection du foncier pour les résidents locaux et la défense de la langue bretonne.",
+    'sylvain durif': "Personnalité devenue virale sur internet sous le pseudonyme du « Grand Monarque », il a annoncé sa candidature citoyenne hors-système à l'élection présidentielle, portant un message axé sur la paix universelle, la bienveillance et le rejet des partis politiques traditionnels.",
+    'olivier becht': "Ancien ministre délégué au Commerce extérieur et député. Il porte le « Projet France », une démarche pragmatique et libérale centrée sur la compétitivité industrielle, l'exportation et la simplification administrative pour les entreprises.",
+    'philippe brun': "Député socialiste de l'Eure et figure d'une gauche attachée au travail et à la production. Il se mobilise pour la réindustrialisation, la défense des salaires ouvriers et la sauvegarde du tissu économique dans les territoires ruraux.",
+    'jerome guedj': "Député et figure socialiste spécialiste des affaires sociales, il défend le système de santé public, la prise en charge de la dépendance et une laïcité républicaine sans concession.",
+    'mira markovic': "Candidate investie par le Parti Animaliste. Elle défend l'inscription de la protection et de la sensibilité animale dans la Constitution, la fin de l'élevage intensif et une transition progressive vers une alimentation végétale.",
+    'anasse kazib': "Militant syndical et figure de Révolution Permanente, il défend un programme marxiste révolutionnaire, la socialisation des moyens de production et l'auto-organisation des travailleurs.",
+    'benoit mathieu': "Candidat citoyen indépendant, il place au cœur de son engagement la démocratie directe, l'instauration du Référendum d'Initiative Citoyenne (RIC) et la participation citoyenne aux décisions nationales.",
+    'carole delga': "Présidente de région représentant la gauche territoriale de gouvernement, elle mise sur la réindustrialisation, les services publics de proximité et une écologie concrète et concertée.",
+    'elisabeth borne': "Ancienne Première ministre, elle incarne la rigueur réformatrice, le plein emploi, l'émancipation par le travail et la planification écologique globale.",
+    'fabien verdier': "Maire de Châteaudun et élu local engagé pour la justice territoriale. Il défend le rééquilibrage des investissements publics en faveur des villes moyennes et des territoires périurbains face aux grandes métropoles.",
+    'gilles platret': "Maire de Chalon-sur-Saône et figure de la droite républicaine locale. Il défend une ligne ferme sur la laïcité, le rétablissement de l'autorité de l'État et le soutien aux collectivités territoriales.",
+    'gerald darmanin': "Ancien ministre de l'Intérieur, il incarne une ligne régalienne populaire, axée sur la fermeté sécuritaire, la maîtrise migratoire et la valorisation du travail des classes moyennes.",
+    'manolo mlekuz': "Porte-parole du mouvement citoyen Trajectoire. Il axe son projet sur l'innovation démocratique, une refonte constitutionnelle participative et l'adaptation des institutions aux transitions numérique et écologique.",
+    'sarah knafo': "Députée européenne et cadre de Reconquête !, elle porte une ligne identitaire et libérale, prônant la défense de la civilisation européenne, la dérégulation économique et l'arrêt de l'immigration.",
+    'sebastien lecornu': "Ministre des Armées issu de la droite, il met en avant le réarmement stratégique de la France, la cohésion nationale et l'ancrage régalien dans les territoires.",
+  };
+
   // ─── RÉSUMÉS CANDIDATS EN MODE RUE ──────────────────────────────────────
   static final Map<String, String> _candidateStreetSummaries = {
     'edouard philippe': "L'ancien boss de Matignon sous Macron. Le mec roule pour son parti Horizons. Son plan : serrer la vis sur les dépenses de l'État, mettre de l'ordre au carré et lâcher du lest aux maires dans les ter-ter.",
@@ -166,7 +220,17 @@ class PoliticalStreetData {
     'olivier becht': "Ancien ministre du Commerce extérieur, il porte un 'Projet France' pragmatique et centré sur l'indépendance économique et le soutien à nos entreprises.",
     'philippe brun': "Le jeune député socialiste de l'Eure. Figure montante d'une gauche productive, il s'est fait connaître en défendant pied à pied les usines menacées de son territoire.",
     'jerome guedj': "Député socialiste spécialiste du grand âge et des comptes sociaux. Républicain intraitable, il allie justice sociale et laïcité intransigeante.",
-    'mira markovic': "Représentante du Parti animaliste. Son programme est limpide : inscrire la protection animale dans le marbre de la loi et fermer les élevages концентраtionnaires.",
+    'mira markovic': "Représentante du Parti animaliste. Son programme est limpide : inscrire la protection animale dans le marbre de la loi et fermer les élevages concentrationnaires.",
+    'anasse kazib': "Militant syndical cheminot et révolutionnaire. Son projet : les travailleurs doivent reprendre le contrôle des usines et des richesses, zéro négociation avec les patrons.",
+    'benoit mathieu': "Candidat citoyen qui prône la démocratie directe : redonner les clés du pouvoir aux Français grâce au référendum citoyen sans intermédiaires.",
+    'carole delga': "Présidente de la région Occitanie. Une gauche de terrain qui défend les trains du quotidien, le travail dans les territoires et une écologie du bon sens sans dogmatisme.",
+    'elisabeth borne': "L'ancienne Première ministre du 49.3. Profil technique et réformateur : plein emploi, gestion carrée des dossiers et transition écologique planifiée par l'État.",
+    'fabien verdier': "Maire de Châteaudun. Son obsession : arrêter de tout donner aux grandes métropoles et remettre du budget dans les villes moyennes et la province oubliée.",
+    'gilles platret': "Maire de Chalon-sur-Saône. Une droite républicaine à l'ancienne : laïcité intransigeante, autorité stricte dans les rues et défense de nos traditions.",
+    'gerald darmanin': "L'ancien premier flic de France. Ligne sécuritaire populaire : fermeté totale contre la délinquance, contrôle strict de l'immigration et valorisation des classes moyennes qui bossent.",
+    'manolo mlekuz': "Le candidat du mouvement Trajectoire. Il veut réécrire les règles du jeu républicain : nouvelle Constitution citoyenne et dépoussiérage intégral de la politique.",
+    'sarah knafo': "Le bras droit de Reconquête devenue eurodéputée. Ligne identitaire et libérale : fin de l'immigration, fierté française et baisse radicale des taxes sur les entreprises.",
+    'sebastien lecornu': "Le ministre des Armées. Profil régalien discret mais solide : réarmer militairement la France, tenir les frontières et renforcer la discipline républicaine.",
   };
 
   // ─── HELPERS ────────────────────────────────────────────────────────────
@@ -766,23 +830,177 @@ class PoliticalStreetData {
         "Développer les repas végétaux dans les cantines scolaires pour respecter les animaux",
       ],
     },
+    'anasse kazib': {
+      'classique': [
+        "Augmentation générale des salaires nets à 2 000 € minimum et échelle mobile des salaires",
+        "Expropriation sous contrôle ouvrier des secteurs stratégiques (énergie, transports, banques)",
+        "Interdiction absolue des licenciements et partage intégral du temps de travail",
+      ],
+      'rue': [
+        "Le salaire net direct à 2000 balles pour tout le monde sans discuter",
+        "Nationaliser les banques et l'énergie et donner les clés aux travailleurs",
+        "Interdiction formelle de virer des employés : zéro licenciement",
+      ],
+    },
+    'benoit mathieu': {
+      'classique': [
+        "Instauration du Référendum d'Initiative Citoyenne (RIC) sous toutes ses formes",
+        "Prise en compte du vote blanc avec obligation de revoter en cas de majorité",
+        "Mandat impératif et révocabilité des élus par les citoyens",
+      ],
+      'rue': [
+        "Le RIC direct pour que les citoyens décident eux-mêmes des lois",
+        "Comptabiliser le vote blanc et annuler l'élection si le blanc l'emporte",
+        "Pouvoir virer un élu en cours de mandat s'il ne respecte pas sa parole",
+      ],
+    },
+    'carole delga': {
+      'classique': [
+        "Plan de réindustrialisation verte et de soutien massif aux PME dans les régions",
+        "Gratuité et renforcement des trains du quotidien et transports publics régionaux",
+        "Défense d'une République décentralisée garantissant l'accès aux soins partout",
+      ],
+      'rue': [
+        "Remettre des usines et du boulot dans nos régions sans baratin parisien",
+        "Des trains régionaux fiables et pas chers pour aller bosser sans galérer",
+        "Remplir les déserts médicaux pour qu'on arrête d'attendre 6 mois chez le toubib",
+      ],
+    },
+    'elisabeth borne': {
+      'classique': [
+        "Poursuite des réformes structurelles pour atteindre le plein emploi durable",
+        "Planification écologique coordonnée État-entreprises-citoyens",
+        "Revalorisation des carrières dans l'éducation et la petite enfance",
+      ],
+      'rue': [
+        "Atteindre le plein emploi en poussant tout le monde vers la formation et le taff",
+        "Planifier la transition écologique au millimètre avec les entreprises",
+        "Remettre des sous sur les salaires des profs et les crèches",
+      ],
+    },
+    'fabien verdier': {
+      'classique': [
+        "Pacte national pour les villes moyennes et rééquilibrage métropole-province",
+        "Moratoire sur la fermeture des classes, gares et hôpitaux de proximité",
+        "Garantie d'accès aux services publics essentiels à moins de 15 minutes",
+      ],
+      'rue': [
+        "Arrêter de gaver Paris et les grandes villes au détriment des villes moyennes",
+        "Interdiction de fermer les hôpitaux de proximité, les gares et les écoles",
+        "Tous les services publics à moins de 15 minutes de chez toi",
+      ],
+    },
+    'gilles platret': {
+      'classique': [
+        "Rétablissement d'une laïcité stricte dans tout l'espace public et les institutions",
+        "Déploiement massif des polices municipales armées et peines courtes immédiates",
+        "Reconnaissance et protection active des traditions et du patrimoine français",
+      ],
+      'rue': [
+        "Laïcité sans aucune concession : zéro dérive religieuse dans l'espace public",
+        "Policiers municipaux armés et sanction immédiate pour les incivilités",
+        "Défendre nos clochers, nos traditions et notre patrimoine local",
+      ],
+    },
+    'gerald darmanin': {
+      'classique': [
+        "Renforcement continu des forces de l'ordre et des moyens de la police nationale",
+        "Expulsion systématique des étrangers délinquants et fermeté pénale absolue",
+        "Valorisation du travail et allègement des cotisations sur les classes moyennes",
+      ],
+      'rue': [
+        "Plus de bleus sur le terrain pour nettoyer les points de deal dans la tess",
+        "Expulser direct les délinquants étrangers sans perdre de temps en paperasse",
+        "Baisse de charges pour les classes moyennes qui se lèvent tôt et galèrent",
+      ],
+    },
+    'manolo mlekuz': {
+      'classique': [
+        "Convocation d'une Constituante citoyenne tirée au sort pour une 6e République moderne",
+        "Transformation numérique des institutions pour une transparence totale des décisions",
+        "Transition écologique territoriale pilotée démocratiquement par les habitants",
+      ],
+      'rue': [
+        "Tirer au sort des citoyens pour écrire la nouvelle Constitution de la République",
+        "Transparence totale en ligne sur où part chaque euro des impôts des Français",
+        "Donner le pouvoir aux habitants des quartiers et villages sur l'écologie locale",
+      ],
+    },
+    'sarah knafo': {
+      'classique': [
+        "Arrêt immédiat de l'immigration et suppression de l'ensemble des aides aux clandestins",
+        "Suppression des impôts de production et baisse radicale de la fiscalité des entreprises",
+        "Défense inconditionnelle de la civilisation, du patrimoine et des valeurs françaises",
+      ],
+      'rue': [
+        "Fermeture immédiate des frontières et tolérance zéro pour les clandestins",
+        "Virer un max de taxes pour redonner de l'air aux entrepreneurs et commerçants",
+        "Défendre l'identité et la culture française sans aucun complexe",
+      ],
+    },
+    'sebastien lecornu': {
+      'classique': [
+        "Hausse continue du budget de la Défense et modernisation des armées françaises",
+        "Renforcement de l'industrie militaire souveraine et de la dissuasion nucléaire",
+        "Service national universel effectif pour consolider la cohésion républicaine",
+      ],
+      'rue': [
+        "Blindage du budget militaire pour que l'armée française reste respectée dans le monde",
+        "Fabriquer nos armes et nos munitions en France sans dépendre des autres pays",
+        "Remettre la discipline et le sens du drapeau au cœur de la jeunesse",
+      ],
+    },
   };
+
+  /// Retourne le résumé Classique d'un candidat
+  static String getCandidateClassiqueSummary(String candidateName, {String? defaultDescription}) {
+    final norm = normalize(candidateName);
+
+    for (final entry in _candidateClassiqueSummaries.entries) {
+      if (norm.contains(normalize(entry.key)) || normalize(entry.key).contains(norm)) {
+        return entry.value;
+      }
+    }
+
+    if (defaultDescription != null && defaultDescription.trim().isNotEmpty) {
+      final desc = defaultDescription.trim();
+      if (!desc.startsWith('Fiche de constat') && !desc.startsWith('Synthèse neutre')) {
+        return desc;
+      }
+    }
+
+    return "Candidat(e) engagé(e) pour l'élection présidentielle de 2027, portant des propositions pour l'avenir de la France.";
+  }
 
   /// Retourne le résumé Mode Rue d'un candidat
   static String getCandidateStreetSummary(String candidateName, {String? defaultDescription}) {
     final norm = normalize(candidateName);
-    
+
     for (final entry in _candidateStreetSummaries.entries) {
       if (norm.contains(normalize(entry.key)) || normalize(entry.key).contains(norm)) {
         return entry.value;
       }
     }
 
-    if (defaultDescription != null && defaultDescription.isNotEmpty) {
-      return "En deux mots sur ce profil : $defaultDescription";
+    if (defaultDescription != null && defaultDescription.trim().isNotEmpty) {
+      final desc = defaultDescription.trim();
+      if (!desc.startsWith('Fiche de constat') && !desc.startsWith('Synthèse neutre')) {
+        return "En deux mots sur ce profil : $desc";
+      }
     }
 
     return "Candidat(e) engagé(e) pour 2027. Son bail : défendre son projet et porter sa vision politique devant les Français.";
+  }
+
+  /// Retourne le résumé d'un candidat selon le mode sélectionné
+  static String getCandidateSummary(
+    String candidateName, {
+    required bool streetMode,
+    String? defaultDescription,
+  }) {
+    return streetMode
+        ? getCandidateStreetSummary(candidateName, defaultDescription: defaultDescription)
+        : getCandidateClassiqueSummary(candidateName, defaultDescription: defaultDescription);
   }
 
   /// Retourne la biographie d'un parti (Classique ou Mode Rue)
