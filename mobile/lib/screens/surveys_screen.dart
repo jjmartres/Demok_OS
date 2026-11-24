@@ -49,6 +49,7 @@ class _SurveysScreenState extends State<SurveysScreen> {
   }
 
   Future<void> _checkVotingStatus() async {
+    if (UserSession().isGuest) return;
     try {
       final response = await ApiClient.get(
         '/surveys/presidential/has-voted',
@@ -105,6 +106,14 @@ class _SurveysScreenState extends State<SurveysScreen> {
   }
 
   Future<void> _vote(String candidateId) async {
+    if (UserSession().isGuest) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Inscrivez-vous pour voter pour un candidat !'),
+        ),
+      );
+      return;
+    }
     // Optimistic UI: Update UI immediately
     setState(() {
       _hasVoted = true;
@@ -724,25 +733,42 @@ class _SurveysScreenState extends State<SurveysScreen> {
 
                       const SizedBox(height: 16),
 
-                      // Bouton de Vote
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                            _showVoteConfirmation(candidate);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          ),
-                          child: const Text(
-                            "Voter pour ce profil",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                      // Bouton de Vote (désactivé pour les invités)
+                      if (!_hasVoted)
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: UserSession().isGuest
+                                ? () {
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(this.context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Inscrivez-vous pour voter pour un candidat !'),
+                                      ),
+                                    );
+                                  }
+                                : () {
+                                    Navigator.pop(context);
+                                    _showVoteConfirmation(candidate);
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: UserSession().isGuest
+                                  ? Colors.grey[300]
+                                  : AppColors.primaryBlue,
+                              elevation: UserSession().isGuest ? 0 : null,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            child: Text(
+                              "Voter pour ce profil",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: UserSession().isGuest ? Colors.grey[600] : Colors.white,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),

@@ -681,18 +681,12 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
             ),
             type: BottomNavigationBarType.fixed,
             onTap: (index) {
-              if (UserSession().isGuest && index == 1) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Inscrivez-vous pour accéder à cette rubrique !')),
-                );
-                return;
-              }
               setState(() {
                 _selectedTabIndex = index;
               });
             },
-            items: [
-              const BottomNavigationBarItem(
+            items: const [
+              BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.only(bottom: 3),
                   child: Icon(Icons.article_outlined, size: 22),
@@ -705,24 +699,22 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
               ),
               BottomNavigationBarItem(
                 icon: Padding(
-                  padding: const EdgeInsets.only(bottom: 3),
+                  padding: EdgeInsets.only(bottom: 3),
                   child: Icon(
                     Icons.how_to_vote_outlined,
                     size: 22,
-                    color: UserSession().isGuest ? Colors.grey[400] : null,
                   ),
                 ),
                 activeIcon: Padding(
-                  padding: const EdgeInsets.only(bottom: 3),
+                  padding: EdgeInsets.only(bottom: 3),
                   child: Icon(
                     Icons.how_to_vote_rounded,
                     size: 22,
-                    color: UserSession().isGuest ? Colors.grey[400] : null,
                   ),
                 ),
                 label: 'Élection 2027',
               ),
-              const BottomNavigationBarItem(
+              BottomNavigationBarItem(
                 icon: Padding(
                   padding: EdgeInsets.only(bottom: 3),
                   child: Icon(Icons.people_outline_rounded, size: 22),
