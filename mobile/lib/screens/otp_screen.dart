@@ -93,9 +93,10 @@ class _OtpScreenState extends State<OtpScreen> {
           token: data['accessToken'],
         );
 
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (_) => const HomeScreen()),
+          (route) => false,
         );
       } else {
         setState(() {

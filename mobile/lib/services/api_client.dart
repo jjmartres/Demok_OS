@@ -32,7 +32,7 @@ class ApiClient {
   static Future<void> _handle401() async {
     await UserSession().clearSession();
     
-    // Redirige vers LandingScreen en supprimant toute la pile de navigation
+    // Redirige vers l'accueil (mode invité) en supprimant toute la pile de navigation
     navigatorKey.currentState?.pushNamedAndRemoveUntil('/', (route) => false);
     
     debugPrint('[ApiClient] Token expiré — session réinitialisée, redirection vers l\'accueil.');

@@ -22,20 +22,19 @@ class UserSession {
   SharedPreferences? _prefs;
 
   bool get isLoggedIn => accessToken != null;
-  
-  bool _isGuestInMemory = false;
-  bool get isGuest => _isGuestInMemory;
-  
-  // Notifier to trigger Desktop UI animations
-  final ValueNotifier<bool> isAppActiveNotifier = ValueNotifier<bool>(false);
-  
+
+  /// Tout visiteur non connecté navigue automatiquement en mode invité.
+  bool get isGuest => !isLoggedIn;
+
+  // Notifier to trigger Desktop UI animations (toujours actif puisque l'application s'ouvre directement)
+  final ValueNotifier<bool> isAppActiveNotifier = ValueNotifier<bool>(true);
+
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
-    
+
     // Nettoyer toute ancienne persistance du mode invité
     await _prefs?.remove('session_isGuest');
-    _isGuestInMemory = false;
-    
+
     // Restore session variables
     userId = _prefs?.getString('session_userId');
     citizenId = _prefs?.getString('session_citizenId');
@@ -44,7 +43,7 @@ class UserSession {
     birthYear = _prefs?.getInt('session_birthYear');
     accessToken = _prefs?.getString('session_token');
 
-    isAppActiveNotifier.value = isLoggedIn;
+    isAppActiveNotifier.value = true;
 
     if (kDebugMode) {
       debugPrint('[UserSession] Initialized. LoggedIn: $isLoggedIn');
@@ -122,15 +121,6 @@ class UserSession {
   bool get hasSeenNotificationPromptAfterInstall => _prefs?.getBool(_getUserKey('hasSeenNotificationPromptAfterInstall')) ?? false;
   Future<void> setNotificationPromptAfterInstallSeen() async => await _prefs?.setBool(_getUserKey('hasSeenNotificationPromptAfterInstall'), true);
 
-  // Définir le mode invité
-  Future<void> setGuestMode(bool isGuest) async {
-    _isGuestInMemory = isGuest;
-    if (_prefs != null) {
-      await _prefs!.remove('session_isGuest');
-    }
-    isAppActiveNotifier.value = isLoggedIn || isGuest;
-  }
-
   Future<void> saveSession({
     required String userId, 
     String? citizenId, 
@@ -157,8 +147,7 @@ class UserSession {
       if (email != null) await _prefs!.setString('session_email', email);
       if (birthYear != null) await _prefs!.setInt('session_birthYear', birthYear);
       if (token != null) await _prefs!.setString('session_token', token);
-      await _prefs!.remove('session_isGuest'); // Login clears guest mode
-      _isGuestInMemory = false;
+      await _prefs!.remove('session_isGuest');
     }
     isAppActiveNotifier.value = true;
   }
@@ -178,8 +167,7 @@ class UserSession {
       await _prefs!.remove('session_birthYear');
       await _prefs!.remove('session_token');
       await _prefs!.remove('session_isGuest');
-      _isGuestInMemory = false;
     }
-    isAppActiveNotifier.value = false;
+    isAppActiveNotifier.value = true;
   }
 }

@@ -137,13 +137,14 @@ class _LoginScreenState extends State<LoginScreen> {
           token: data['accessToken'],
         );
 
-        // Navigate to home with user data
+        // Navigate to home with user data (reset navigation stack)
         if (mounted) {
-          Navigator.pushReplacement(
+          Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
               builder: (context) => const HomeScreen(),
             ),
+            (route) => false,
           );
         }
       } else {
@@ -335,9 +336,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    if (!UserSession().isLoggedIn && !UserSession().isGuest) {
-      UserSession().isAppActiveNotifier.value = false;
-    }
     _pseudoController.dispose();
     _passwordController.dispose();
     _pseudoFocus.dispose();

@@ -9,7 +9,7 @@ import '../models/citizen_progress.dart';
 import 'gamification_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../services/api_client.dart';
-import 'landing_screen.dart';
+import 'home_screen.dart';
 import '../widgets/legal_dialogs.dart';
 import '../services/push_notification_service.dart';
 
@@ -601,7 +601,7 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
                   await UserSession().clearSession();
                   if (context.mounted) {
                     Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => const LandingScreen()),
+                      MaterialPageRoute(builder: (context) => const HomeScreen()),
                       (route) => false,
                     );
                   }
@@ -918,9 +918,12 @@ class _ProfileScreenContentState extends State<_ProfileScreenContent> {
       }
 
       if (response.statusCode == 200) {
-        UserSession().clearSession();
+        await UserSession().clearSession();
         if (mounted) {
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            (route) => false,
+          );
           ScaffoldMessenger.of(context).showSnackBar(
              const SnackBar(content: Text('Votre compte a été supprimé définitivement.')),
           );

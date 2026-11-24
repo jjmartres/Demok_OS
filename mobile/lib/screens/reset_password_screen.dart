@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../services/api_client.dart';
+import 'home_screen.dart';
+import 'login_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   final String token;
@@ -50,7 +52,13 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               backgroundColor: AppColors.primaryBlue,
             ),
           );
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (_) => const HomeScreen()),
+            (route) => false,
+          );
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const LoginScreen()),
+          );
         }
       } else {
         setState(() => _errorMessage = 'Lien expiré ou invalide');

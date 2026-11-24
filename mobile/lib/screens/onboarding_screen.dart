@@ -52,9 +52,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with WidgetsBinding
 
   @override
   void dispose() {
-    if (!UserSession().isLoggedIn && !UserSession().isGuest) {
-      UserSession().isAppActiveNotifier.value = false;
-    }
     WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
     _scrollController.dispose();

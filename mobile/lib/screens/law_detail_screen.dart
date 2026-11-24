@@ -14,6 +14,7 @@ import '../services/api_client.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../widgets/report_error_dialog.dart';
 import '../widgets/law_deep_dive_dialog.dart';
+import '../widgets/auth_prompt_modal.dart';
 
 class LawDetailScreen extends StatelessWidget {
   final Law law;
@@ -155,8 +156,10 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
 
   Future<void> _toggleFavorite() async {
     if (UserSession().isGuest) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Inscrivez-vous pour utiliser les favoris !')),
+      AuthPromptModal.show(
+        context,
+        title: 'Ajoutez cette loi en favori',
+        message: 'Créez un compte citoyen pour retrouver facilement cette loi et suivre son évolution au Parlement.',
       );
       return;
     }
@@ -198,9 +201,11 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
   Future<void> _castVote(String choice) async {
     try {
       final userId = UserSession().userId;
-       if (userId == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Vous devez être connecté pour voter')),
+      if (userId == null || UserSession().isGuest) {
+        AuthPromptModal.show(
+          context,
+          title: 'Votez sur cette loi',
+          message: 'Créez un compte citoyen en quelques secondes pour voter anonymement et comparer votre avis avec celui de votre député.',
         );
         return;
       }
@@ -436,9 +441,7 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                   ),
                 ),
                 
-                if (UserSession().isGuest)
-                  _buildGuestBanner()
-                else if ((widget.law.isVotable && !_hasVoted) || _isModifyingVote) 
+                if ((widget.law.isVotable && !_hasVoted) || _isModifyingVote)
                   _buildVotingButtons(),
               ],
             ),
@@ -476,45 +479,6 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
         tooltip: tooltip,
         padding: EdgeInsets.zero,
         splashRadius: 20,
-      ),
-    );
-  }
-
-  Widget _buildGuestBanner() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          const Text('Inscrivez-vous pour voter !', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          const SizedBox(height: 12),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {
-                UserSession().clearSession();
-                Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primaryBlue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              ),
-              child: const Text('Créer un compte', style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ),
-        ],
       ),
     );
   }

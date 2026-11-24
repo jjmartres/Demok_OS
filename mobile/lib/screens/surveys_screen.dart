@@ -6,6 +6,7 @@ import '../data/political_street_data.dart';
 import '../services/user_session.dart';
 import '../theme/app_colors.dart';
 import '../services/api_client.dart';
+import '../widgets/auth_prompt_modal.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SurveysScreen extends StatefulWidget {
@@ -107,10 +108,10 @@ class _SurveysScreenState extends State<SurveysScreen> {
 
   Future<void> _vote(String candidateId) async {
     if (UserSession().isGuest) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Inscrivez-vous pour voter pour un candidat !'),
-        ),
+      AuthPromptModal.show(
+        context,
+        title: 'Votez pour la Présidentielle 2027',
+        message: 'Créez un compte citoyen en quelques secondes pour voter anonymement et découvrir les résultats de la communauté.',
       );
       return;
     }
@@ -733,7 +734,7 @@ class _SurveysScreenState extends State<SurveysScreen> {
 
                       const SizedBox(height: 16),
 
-                      // Bouton de Vote (désactivé pour les invités)
+                      // Bouton de Vote (ouvre la modale de création de compte pour les invités)
                       if (!_hasVoted)
                         SizedBox(
                           width: double.infinity,
@@ -741,10 +742,11 @@ class _SurveysScreenState extends State<SurveysScreen> {
                             onPressed: UserSession().isGuest
                                 ? () {
                                     Navigator.pop(context);
-                                    ScaffoldMessenger.of(this.context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Inscrivez-vous pour voter pour un candidat !'),
-                                      ),
+                                    AuthPromptModal.show(
+                                      this.context,
+                                      title: 'Votez pour la Présidentielle 2027',
+                                      message:
+                                          'Créez un compte citoyen en quelques secondes pour voter anonymement pour ${candidate.name} et découvrir les résultats de la communauté.',
                                     );
                                   }
                                 : () {
@@ -752,19 +754,16 @@ class _SurveysScreenState extends State<SurveysScreen> {
                                     _showVoteConfirmation(candidate);
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: UserSession().isGuest
-                                  ? Colors.grey[300]
-                                  : AppColors.primaryBlue,
-                              elevation: UserSession().isGuest ? 0 : null,
+                              backgroundColor: AppColors.primaryBlue,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                             ),
-                            child: Text(
+                            child: const Text(
                               "Voter pour ce profil",
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: UserSession().isGuest ? Colors.grey[600] : Colors.white,
+                                color: Colors.white,
                               ),
                             ),
                           ),

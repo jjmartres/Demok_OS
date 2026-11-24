@@ -11,13 +11,13 @@ import '../widgets/skeleton_law_card.dart';
 import '../widgets/government_modal.dart';
 import 'law_detail_screen.dart';
 import 'profile_screen.dart';
-import 'landing_screen.dart';
 import 'surveys_screen.dart';
 import 'deputy_list_screen.dart';
 import '../services/api_client.dart';
 import '../services/pwa_install_service.dart';
 import '../widgets/android_install_banner.dart';
 import '../widgets/ios_install_banner.dart';
+import '../widgets/auth_prompt_modal.dart';
 import '../services/push_notification_service.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -399,13 +399,13 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
             icon: Icon(
               _showFavoritesOnly ? Icons.star_rounded : Icons.star_outline_rounded,
               size: 20,
-              color: UserSession().isGuest 
-                  ? AppColors.textDisabled 
-                  : (_showFavoritesOnly ? Colors.amber[700] : AppColors.textSecondary),
+              color: _showFavoritesOnly ? Colors.amber[700] : AppColors.textSecondary,
             ),
             onPressed: UserSession().isGuest ? () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Inscrivez-vous pour utiliser les favoris !')),
+              AuthPromptModal.show(
+                context,
+                title: 'Sauvegardez vos lois favorites',
+                message: 'Créez un compte citoyen en quelques secondes pour enregistrer les textes qui vous intéressent et suivre leur évolution.',
               );
             } : () {
               setState(() {
@@ -416,14 +416,16 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
           const SizedBox(width: 8),
           _buildTopIconButton(
             tooltip: 'Mon profil',
-            icon: Icon(
+            icon: const Icon(
               Icons.person_outline_rounded,
               size: 20,
-              color: UserSession().isGuest ? AppColors.textDisabled : AppColors.textSecondary,
+              color: AppColors.textSecondary,
             ),
             onPressed: UserSession().isGuest ? () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Inscrivez-vous pour accéder au profil !')),
+              AuthPromptModal.show(
+                context,
+                title: 'Votre espace citoyen',
+                message: 'Créez un compte ou connectez-vous pour voter, suivre votre député et progresser dans vos niveaux de citoyenneté.',
               );
             } : () {
               Navigator.push(
@@ -580,43 +582,6 @@ class _HomeScreenContentState extends State<_HomeScreenContent> {
 
         ],
       ),  // fin Column
-          
-          // ---- Bouton Flottant Invité ----
-          if (UserSession().isGuest)
-            Positioned(
-              bottom: 24,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () {
-                    UserSession().clearSession();
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const LandingScreen()),
-                      (route) => false,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    elevation: 6,
-                    shadowColor: Colors.black45,
-                  ),
-                  child: const Text(
-                    'Créer un compte',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
             
           // ---- Bannière PWA flottante ----
           AnimatedSwitcher(

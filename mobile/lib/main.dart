@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'screens/landing_screen.dart';
 import 'screens/home_screen.dart';
 import 'services/user_session.dart';
 import 'services/push_notification_service.dart';
@@ -62,9 +61,7 @@ class DemokApp extends StatelessWidget {
         
         if (uri.path == '/surveys') {
           return MaterialPageRoute(
-            builder: (context) => (UserSession().isLoggedIn || UserSession().isGuest) 
-              ? const HomeScreen(initialTab: 1)
-              : const LandingScreen(),
+            builder: (context) => const HomeScreen(initialTab: 1),
           );
         }
 
@@ -78,11 +75,9 @@ class DemokApp extends StatelessWidget {
           }
         }
         
-        // Default routing
+        // Default routing : accès direct à l'interface principale (mode connecté ou invité)
         return MaterialPageRoute(
-          builder: (context) => (UserSession().isLoggedIn || UserSession().isGuest) 
-            ? const HomeScreen() 
-            : const LandingScreen(),
+          builder: (context) => const HomeScreen(),
         );
       },
     );
