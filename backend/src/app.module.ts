@@ -9,6 +9,7 @@ import { join } from 'path';
 import { IngestionModule } from './ingestion/ingestion.module';
 import { AuthModule } from './auth/auth.module';
 import { VotesModule } from './votes/votes.module';
+import { GroupVotesModule } from './votes/group-votes.module';
 import { UsersModule } from './users/users.module';
 import { GamificationModule } from './gamification/gamification.module';
 import { CategoriesModule } from './laws/categories.module';
@@ -40,6 +41,7 @@ import { ReportsModule } from './reports/reports.module';
         IngestionModule,
         AuthModule,
         VotesModule,
+        GroupVotesModule,
         UsersModule,
         GamificationModule,
         CategoriesModule,
