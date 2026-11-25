@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Query, UseGuards, HttpCode, ValidationPipe } from '@nestjs/common';
+import { IsString, MaxLength, MinLength } from 'class-validator';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { AUTH_THROTTLE_LOGIN, AUTH_THROTTLE_STRICT } from './auth.throttle';
 import { AuthService } from './auth.service';
@@ -6,6 +7,15 @@ import { OnboardingDto } from './dto/onboarding.dto';
 import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+
+export class RefreshTokenDto {
+    @IsString()
+    @MinLength(20)
+    @MaxLength(200)
+    refreshToken: string;
+}
+
+const REFRESH_PIPE = new ValidationPipe({ whitelist: true });
 
 @Controller('auth')
 @UseGuards(ThrottlerGuard)
@@ -50,5 +60,18 @@ export class AuthController {
     @Throttle({ default: AUTH_THROTTLE_STRICT })
     async resendOtp(@Body() body: { userId: string }) {
         return this.authService.resendOtp(body.userId);
+    }
+
+    @Post('refresh')
+    @HttpCode(200)
+    @Throttle({ default: AUTH_THROTTLE_LOGIN })
+    async refresh(@Body(REFRESH_PIPE) body: RefreshTokenDto) {
+        return this.authService.refresh(body.refreshToken);
+    }
+
+    @Post('logout')
+    @HttpCode(200)
+    async logout(@Body(REFRESH_PIPE) body: RefreshTokenDto) {
+        return this.authService.logout(body.refreshToken);
     }
 }

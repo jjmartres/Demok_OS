@@ -9,6 +9,7 @@ describe('AuthService — OTP', () => {
     let citizenRepository: any;
     let mailService: any;
     let service: AuthService;
+    let refreshTokenService: any;
 
     const makeUser = (overrides: Partial<User> = {}): User => {
         const user = Object.assign(new User(), {
@@ -40,7 +41,8 @@ describe('AuthService — OTP', () => {
         citizenRepository = { findOne: jest.fn().mockResolvedValue({ id: 'cit-1', pseudo: 'jo' }) };
         mailService = { sendOtpEmail: jest.fn().mockResolvedValue(undefined) };
         const jwtService = { sign: jest.fn().mockReturnValue('jwt') };
-        service = new AuthService(userRepository, citizenRepository, {} as any, {} as any, mailService, jwtService as any);
+        refreshTokenService = { issue: jest.fn().mockResolvedValue({ token: 'refresh-token' }) };
+        service = new AuthService(userRepository, citizenRepository, {} as any, {} as any, mailService, jwtService as any, refreshTokenService);
         jest.spyOn(service as any, 'decryptEmail').mockReturnValue('jo@example.org');
     });
 
@@ -49,6 +51,7 @@ describe('AuthService — OTP', () => {
         const result = await service.verifyOtp('user-1', '123456');
 
         expect(result.success).toBe(true);
+        expect(result).toMatchObject({ accessToken: 'jwt', refreshToken: 'refresh-token' });
         const saved = users.get('user-1');
         expect(saved.emailVerified).toBe(true);
         expect(saved.otpCode).toBeNull();

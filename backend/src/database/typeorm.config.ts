@@ -17,13 +17,14 @@ import { TopicPoll } from '../surveys/topic-poll.entity';
 import { Report } from '../reports/entities/report.entity';
 import { SurveyRegistry } from '../surveys/survey-registry.entity';
 import { SurveyUrna } from '../surveys/survey-urna.entity';
+import { RefreshToken } from '../auth/refresh-token.entity';
 
 export const ENTITIES = [
     Law, LawFavorite, User, Citizen,
     VoteRegistry, VoteUrna, Deputy, OfficialVote,
     CitizenLevel, Category, Amendement, Candidate,
     PresidentialVote, TopicPoll,
-    Report, SurveyRegistry, SurveyUrna,
+    Report, SurveyRegistry, SurveyUrna, RefreshToken,
 ];
 
 /**

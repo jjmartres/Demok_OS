@@ -11,6 +11,7 @@ import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
 import { GamificationService } from '../gamification/gamification.service';
 import { MailService } from '../notifications/mail/mail.service';
+import { RefreshTokenService } from './refresh-token.service';
 import { generateOtp, hashOtp, verifyOtpHash, OTP_MAX_ATTEMPTS, OTP_TTL_MS } from './otp.util';
 
 @Injectable()
@@ -28,6 +29,7 @@ export class AuthService {
         private readonly gamificationService: GamificationService,
         private readonly mailService: MailService,
         private readonly jwtService: JwtService,
+        private readonly refreshTokenService: RefreshTokenService,
     ) { }
 
     /**
@@ -182,7 +184,7 @@ export class AuthService {
         user.otpAttempts = 0;
         await this.userRepository.save(user);
 
-        const accessToken = this.generateToken(user);
+        const { accessToken, refreshToken } = await this.issueTokens(user);
         
         // Fetch citizen for complete response
         const citizen = await this.citizenRepository.findOne({
@@ -198,6 +200,7 @@ export class AuthService {
             email: this.decryptEmail(user.emailEncrypted),
             birthYear: citizen?.birthYear,
             accessToken,
+            refreshToken,
         };
     }
 
@@ -282,7 +285,7 @@ export class AuthService {
         await this.gamificationService.handleDailyConnection(citizen.id);
         await this.gamificationService.checkAnniversary(citizen.id);
 
-        const accessToken = this.generateToken(citizen.user);
+        const { accessToken, refreshToken } = await this.issueTokens(citizen.user);
 
         return {
             success: true,
@@ -292,6 +295,7 @@ export class AuthService {
             email: this.decryptEmail(citizen.user.emailEncrypted),
             birthYear: citizen.birthYear,
             accessToken,
+            refreshToken,
             message: 'Login successful',
         };
     }
@@ -302,6 +306,24 @@ export class AuthService {
     private generateToken(user: User): string {
         const payload = { sub: user.id };
         return this.jwtService.sign(payload);
+    }
+
+    /** Jeton d'accès court + jeton de rafraîchissement révocable. */
+    private async issueTokens(user: User): Promise<{ accessToken: string; refreshToken: string }> {
+        const { token } = await this.refreshTokenService.issue(user);
+        return { accessToken: this.generateToken(user), refreshToken: token };
+    }
+
+    /** Renouvelle la session (rotation du jeton de rafraîchissement). */
+    async refresh(refreshToken: string) {
+        const { user, token } = await this.refreshTokenService.rotate(refreshToken);
+        return { accessToken: this.generateToken(user), refreshToken: token };
+    }
+
+    /** Déconnexion : le jeton de rafraîchissement n'est plus utilisable. */
+    async logout(refreshToken: string) {
+        await this.refreshTokenService.revoke(refreshToken);
+        return { success: true };
     }
 
     /**
@@ -354,6 +376,9 @@ export class AuthService {
         user.resetToken = null;
         user.resetTokenExpires = null;
         await this.userRepository.save(user);
+
+        // Un nouveau mot de passe ferme toutes les sessions ouvertes
+        await this.refreshTokenService.revokeAllForUser(user.id);
 
         return {
             success: true,
