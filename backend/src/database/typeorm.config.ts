@@ -12,7 +12,6 @@ import { CitizenLevel } from '../gamification/entities/citizen-level.entity';
 import { Category } from '../laws/category.entity';
 import { Amendement } from '../laws/amendement.entity';
 import { Candidate } from '../surveys/candidate.entity';
-import { PresidentialVote } from '../surveys/presidential-vote.entity';
 import { TopicPoll } from '../surveys/topic-poll.entity';
 import { Report } from '../reports/entities/report.entity';
 import { SurveyRegistry } from '../surveys/survey-registry.entity';
@@ -22,7 +21,7 @@ export const ENTITIES = [
     Law, LawFavorite, User, Citizen,
     VoteRegistry, VoteUrna, Deputy, OfficialVote,
     CitizenLevel, Category, Amendement, Candidate,
-    PresidentialVote, TopicPoll,
+    TopicPoll,
     Report, SurveyRegistry, SurveyUrna,
 ];
 
