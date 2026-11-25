@@ -26,6 +26,9 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm test -- --ci
+        env:
+          # Fuseau non-UTC : révèle les décalages de date (new Date(y, m, d).toISOString()…)
+          TZ: Europe/Paris
       - run: npm run build
 
   mobile:
