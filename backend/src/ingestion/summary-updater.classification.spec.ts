@@ -4,6 +4,7 @@ import { CategoriesSeedService } from '../laws/seeds/categories-seed.service';
 import { Category } from '../laws/category.entity';
 import { Law } from '../laws/law.entity';
 import { Territory } from '../laws/taxonomy';
+import { AiService } from '../ai/ai.service';
 
 const categories: Category[] = new CategoriesSeedService({} as any).seedData.map((c, i) =>
     Object.assign(new Category(), { id: i + 1, ...c }),
@@ -27,7 +28,7 @@ describe('SummaryUpdaterService — classification in the summary call', () => {
         const categoryRepository = { find: jest.fn().mockResolvedValue(categories) };
         const config = { get: jest.fn((key: string, def?: string) => (key === 'MISTRAL_API_KEY' ? 'test-key' : def)) };
         const categorization = new CategorizationService(categoryRepository as any, lawRepository);
-        service = new SummaryUpdaterService(lawRepository, config as any, categoryRepository as any, categorization);
+        service = new SummaryUpdaterService(lawRepository, config as any, categoryRepository as any, categorization, new AiService(config as any));
     });
 
     afterEach(() => {

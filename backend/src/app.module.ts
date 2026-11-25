@@ -7,6 +7,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { buildTypeOrmOptions } from './database/typeorm.config';
 import { join } from 'path';
 import { IngestionModule } from './ingestion/ingestion.module';
+import { AiModule } from './ai/ai.module';
 import { AuthModule } from './auth/auth.module';
 import { VotesModule } from './votes/votes.module';
 import { UsersModule } from './users/users.module';
@@ -37,6 +38,7 @@ import { ReportsModule } from './reports/reports.module';
 
         TypeOrmModule.forRoot(buildTypeOrmOptions()),
         EventEmitterModule.forRoot({ global: true }),
+        AiModule,
         IngestionModule,
         AuthModule,
         VotesModule,

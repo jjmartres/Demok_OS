@@ -1,4 +1,6 @@
 import { expandTerritoryFilter } from '../laws/taxonomy';
+import { AiService } from '../ai/ai.service';
+import { condenseLegalText } from '../ai/ai-text';
 import { Injectable, NotFoundException, ConflictException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In, Brackets } from 'typeorm';
@@ -40,6 +42,7 @@ export class VotesService {
         private readonly deputyRepository: Repository<Deputy>,
         @InjectRepository(LawFavorite)
         private readonly lawFavoriteRepository: Repository<LawFavorite>,
+        private readonly aiService: AiService,
         private readonly eventEmitter: EventEmitter2,
     ) { }
 
@@ -588,11 +591,9 @@ export class VotesService {
             };
         }
 
-        const mistralApiKey = process.env.MISTRAL_API_KEY;
-        const mistralModel = process.env.MISTRAL_MODEL || 'mistral-small-latest';
 
         // Fallback si pas de clé API configurée
-        if (!mistralApiKey) {
+        if (!this.aiService.isConfigured()) {
             const fallbackClassique = {
                 dailyImpact: `Cette proposition ou ce projet de loi ("${law.titleOfficial}") vise à faire évoluer les règles en vigueur dans son domaine d'application. Ses effets pratiques s'appliqueront aux acteurs et citoyens concernés dès sa promulgation officielle.`,
                 keyFigures: [],
@@ -652,34 +653,11 @@ Réponds STRICTEMENT sous ce format JSON :
   }
 }`;
 
-            const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${mistralApiKey}`,
-                    'Accept': 'application/json',
-                },
-                body: JSON.stringify({
-                    model: mistralModel,
-                    messages: [
-                        { role: 'system', content: systemPrompt },
-                        {
-                            role: 'user',
-                            content: `Analyse cette loi :\nTitre officiel : ${law.titleOfficial}\nTitre vulgarisé : ${law.titleVulgarized || ''}\nRésumé existant : ${law.summary?.sections?.['Résumé'] || ''}\nContenu du texte : ${(law.rawText || '').substring(0, 4500)}`,
-                        },
-                    ],
-                    response_format: { type: "json_object" },
-                    max_tokens: 1400,
-                }),
+            const parsed = await this.aiService.chatJson({
+                system: systemPrompt,
+                user: `Analyse cette loi :\nTitre officiel : ${law.titleOfficial}\nTitre vulgarisé : ${law.titleVulgarized || ''}\nRésumé existant : ${law.summary?.sections?.['Résumé'] || ''}\nContenu du texte : ${condenseLegalText(law.rawText)}`,
+                maxTokens: 1400,
             });
-
-            if (!response.ok) {
-                throw new Error(`Mistral API error: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            const content = data.choices[0]?.message?.content;
-            const parsed = JSON.parse(content);
 
             if (parsed.classique && parsed.rue) {
                 // Sauvegarder dans la BDD pour mise en cache permanente

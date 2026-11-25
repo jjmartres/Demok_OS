@@ -25,7 +25,6 @@
     "migration:run:prod": "typeorm -d dist/database/data-source.js migration:run"
   },
   "dependencies": {
-    "@mistralai/mistralai": "^2.2.5",
     "@nestjs-modules/mailer": "^2.3.0",
     "@nestjs/axios": "^3.0.0",
     "@nestjs/bull": "^11.0.4",
