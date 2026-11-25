@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { firstValueFrom } from 'rxjs';
 import * as AdmZip from 'adm-zip';
 import { Law, LawStatus, NavetteStatus } from '../laws/law.entity';
@@ -478,11 +478,16 @@ export class DeputyVoteIngestionService {
         // Les choix sont déjà exprimés sur la loi (inversés pour une motion de rejet)
         const groups = extractGroupVotesFromScrutin(scrutin, isMotionDeRejet);
 
-        for (const group of groups) {
-            await this.storeVotesByRefs(law, group.nominatif.FOR, VoteChoice.FOR, group.organeRef, scrutinId, dateScrutin);
-            await this.storeVotesByRefs(law, group.nominatif.AGAINST, VoteChoice.AGAINST, group.organeRef, scrutinId, dateScrutin);
-            await this.storeVotesByRefs(law, group.nominatif.ABSTAIN, VoteChoice.ABSTAIN, group.organeRef, scrutinId, dateScrutin);
-        }
+        await this.storeOfficialVotes(
+            law,
+            groups.flatMap((g) => [
+                ...g.nominatif.FOR.map((acteurRef) => ({ acteurRef, choice: VoteChoice.FOR, organeRef: g.organeRef })),
+                ...g.nominatif.AGAINST.map((acteurRef) => ({ acteurRef, choice: VoteChoice.AGAINST, organeRef: g.organeRef })),
+                ...g.nominatif.ABSTAIN.map((acteurRef) => ({ acteurRef, choice: VoteChoice.ABSTAIN, organeRef: g.organeRef })),
+            ]),
+            scrutinId,
+            dateScrutin,
+        );
 
         try {
             await this.groupVotesService.replaceForLaw(law, scrutinId, groups);
@@ -491,34 +496,58 @@ export class DeputyVoteIngestionService {
         }
     }
 
-    private async storeVotesByRefs(law: Law, acteurRefs: string[], choice: VoteChoice, organeRef: string, scrutinId: string, dateScrutin: string): Promise<void> {
-        for (const acteurRef of acteurRefs) {
-            try {
-                let deputy = await this.deputyRepository.findOne({ where: { anActeurRef: acteurRef } });
-                if (!deputy) {
-                    deputy = this.deputyRepository.create({
-                        externalId: acteurRef,
-                        anActeurRef: acteurRef,
-                        fullName: acteurRef,
-                        groupePolitique: organeRef,
-                    });
-                    await this.deputyRepository.save(deputy);
-                }
+    /**
+     * Enregistre les votes individuels d'un scrutin en un nombre constant de requêtes
+     * (au lieu de 2 à 4 requêtes par député) : députés et votes existants chargés en bloc,
+     * créations insérées par lots.
+     */
+    async storeOfficialVotes(
+        law: Law,
+        entries: Array<{ acteurRef: string; choice: VoteChoice; organeRef?: string; fullName?: string }>,
+        scrutinId: string,
+        dateScrutin: string,
+    ): Promise<{ created: number; deputiesCreated: number }> {
+        const unique = new Map<string, (typeof entries)[number]>();
+        for (const e of entries) if (e.acteurRef && !unique.has(e.acteurRef)) unique.set(e.acteurRef, e);
+        if (!unique.size) return { created: 0, deputiesCreated: 0 };
 
-                const existingVote = await this.officialVoteRepository.findOne({
-                    where: { deputy: { id: deputy.id }, law: { id: law.id } },
+        const refs = [...unique.keys()];
+        const known = await this.deputyRepository.find({ where: { anActeurRef: In(refs) } });
+        const byRef = new Map(known.map((d) => [d.anActeurRef, d]));
+
+        const missing = refs
+            .filter((ref) => !byRef.has(ref))
+            .map((ref) => {
+                const e = unique.get(ref);
+                return this.deputyRepository.create({
+                    externalId: ref,
+                    anActeurRef: ref,
+                    fullName: e.fullName || ref,
+                    groupePolitique: e.organeRef,
                 });
-
-                if (!existingVote) {
-                    const officialVote = this.officialVoteRepository.create({
-                        deputy, law, choice, voteDate: new Date(dateScrutin), scrutinId,
-                    });
-                    await this.officialVoteRepository.save(officialVote);
-                }
-            } catch (err) {
-                this.logger.warn(`⚠️ Vote individuel non enregistré (${acteurRef}): ${err.message}`);
-            }
+            });
+        if (missing.length) {
+            const saved = await this.deputyRepository.save(missing, { chunk: 200 });
+            for (const d of saved) byRef.set(d.anActeurRef, d);
         }
+
+        const deputyIds = [...byRef.values()].map((d) => d.id);
+        const existing = await this.officialVoteRepository.find({
+            where: { law: { id: law.id }, deputy: { id: In(deputyIds) } },
+            relations: ['deputy'],
+        });
+        const alreadyVoted = new Set(existing.map((v) => v.deputy?.id));
+
+        const votes = refs
+            .map((ref) => ({ deputy: byRef.get(ref), choice: unique.get(ref).choice }))
+            .filter(({ deputy }) => deputy && !alreadyVoted.has(deputy.id))
+            .map(({ deputy, choice }) =>
+                this.officialVoteRepository.create({ deputy, law, choice, voteDate: new Date(dateScrutin), scrutinId }),
+            );
+        if (votes.length) {
+            await this.officialVoteRepository.save(votes, { chunk: 200 });
+        }
+        return { created: votes.length, deputiesCreated: missing.length };
     }
 
     /**
@@ -646,60 +675,31 @@ export class DeputyVoteIngestionService {
         
         await this.lawRepository.save(law);
         
-        // Stockage des votes individuels
-        for (const groupEntry of details.groupVotes) {
-            const groupName = groupEntry.groupName;
-            for (const voteEntry of groupEntry.votes) {
-                const actorRef = voteEntry.deputyAnRef;
-                let choice = voteEntry.choice;
-                if (isMotionDeRejet) {
-                    if (choice === VoteChoice.FOR) choice = VoteChoice.AGAINST;
-                    else if (choice === VoteChoice.AGAINST) choice = VoteChoice.FOR;
-                }
-                const fullName = voteEntry.deputyName;
-                
-                try {
-                    let deputy = await this.deputyRepository.findOne({ where: { anActeurRef: actorRef } });
-                    if (!deputy) {
-                        deputy = this.deputyRepository.create({
-                            externalId: actorRef,
-                            anActeurRef: actorRef,
-                            fullName: fullName,
-                            groupePolitique: groupName,
-                        });
-                        await this.deputyRepository.save(deputy);
-                    }
-                    
-                    const existingVote = await this.officialVoteRepository.findOne({
-                        where: { deputy: { id: deputy.id }, law: { id: law.id } },
-                    });
-                    
-                    if (!existingVote) {
-                        const officialVote = this.officialVoteRepository.create({
-                            deputy,
-                            law,
-                            choice,
-                            voteDate: new Date(details.dateScrutin),
-                            scrutinId: scrutinId,
-                        });
-                        await this.officialVoteRepository.save(officialVote);
-                    }
-                } catch (err) {
-                    this.logger.warn(`⚠️ Erreur d'enregistrement du vote individuel pour le député ${fullName}: ${err.message}`);
-                }
-            }
-        }
-        
+        // Choix exprimés sur la loi (inversés pour une motion de rejet)
+        const flip = (choice: VoteChoice) =>
+            !isMotionDeRejet ? choice
+                : choice === VoteChoice.FOR ? VoteChoice.AGAINST
+                : choice === VoteChoice.AGAINST ? VoteChoice.FOR : choice;
+        const flipped = (details.groupVotes || []).map((g: any) => ({
+            ...g,
+            votes: (g.votes || []).map((v: any) => ({ ...v, choice: flip(v.choice) })),
+        }));
+
+        // Stockage des votes individuels (en bloc)
         try {
-            const flipped = details.groupVotes.map((g: any) => ({
-                ...g,
-                votes: g.votes.map((v: any) => ({
-                    ...v,
-                    choice: !isMotionDeRejet ? v.choice
-                        : v.choice === VoteChoice.FOR ? VoteChoice.AGAINST
-                        : v.choice === VoteChoice.AGAINST ? VoteChoice.FOR : v.choice,
-                })),
-            }));
+            await this.storeOfficialVotes(
+                law,
+                flipped.flatMap((g: any) =>
+                    g.votes.map((v: any) => ({ acteurRef: v.deputyAnRef, choice: v.choice, organeRef: g.groupOrganId, fullName: v.deputyName })),
+                ),
+                scrutinId,
+                details.dateScrutin,
+            );
+        } catch (err) {
+            this.logger.warn(`⚠️ Erreur d'enregistrement des votes individuels pour ${law.externalId}: ${err.message}`);
+        }
+
+        try {
             await this.groupVotesService.replaceForLaw(law, scrutinId, groupVotesFromScraped(flipped));
         } catch (err) {
             this.logger.warn(`⚠️ Votes par groupe non enregistrés pour ${law.externalId}: ${err.message}`);

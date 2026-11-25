@@ -18,18 +18,20 @@ describe('DeputyVoteIngestionService — individual and group votes', () => {
         deputies = new Map();
         savedVotes = [];
         const deputyRepository = {
-            findOne: jest.fn(async ({ where }) => deputies.get(where.anActeurRef) ?? null),
+            find: jest.fn(async ({ where }) => where.anActeurRef.value.map((r: string) => deputies.get(r)).filter(Boolean)),
             create: jest.fn((d) => d),
-            save: jest.fn(async (d) => {
-                const saved = { id: `dep-${d.anActeurRef}`, ...d };
-                deputies.set(d.anActeurRef, saved);
-                return saved;
-            }),
+            save: jest.fn(async (list: any[]) =>
+                list.map((d) => {
+                    const saved = { id: `dep-${d.anActeurRef}`, ...d };
+                    deputies.set(d.anActeurRef, saved);
+                    return saved;
+                }),
+            ),
         };
         const officialVoteRepository = {
-            findOne: jest.fn().mockResolvedValue(null),
+            find: jest.fn().mockResolvedValue([]),
             create: jest.fn((v) => v),
-            save: jest.fn(async (v) => savedVotes.push(v)),
+            save: jest.fn(async (list: any[]) => savedVotes.push(...list)),
         };
         groupVotesService = { replaceForLaw: jest.fn().mockResolvedValue(3), hasGroupVotes: jest.fn().mockResolvedValue(false) };
         lawRepository = { createQueryBuilder: jest.fn() };
