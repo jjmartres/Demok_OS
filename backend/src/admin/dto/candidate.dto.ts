@@ -1,4 +1,4 @@
-import { IsDateString, IsEnum, IsOptional, IsString, Matches, MaxLength, ValidateIf } from 'class-validator';
+import { IsDateString, IsEnum, IsOptional, IsString, IsUUID, Matches, MaxLength, ValidateIf } from 'class-validator';
 import { CandidateStatus, ProgramStatus } from '../../surveys/candidate.entity';
 
 /** Lien externe en HTTPS ou fichier déposé via /admin/candidates/upload. */
@@ -60,6 +60,18 @@ export class CandidateDto {
     @ValidateIf((_, v) => v !== null && v !== '')
     @IsDateString()
     programPublishedAt?: string | null;
+
+    /** Député correspondant (si le candidat est ou a été député) */
+    @IsOptional()
+    @ValidateIf((_, v) => v !== null && v !== '')
+    @IsUUID('4', { message: 'deputyId doit être un identifiant de député' })
+    deputyId?: string | null;
+
+    /** Groupe AN de sa formation (code d'organe « PO… ») */
+    @IsOptional()
+    @ValidateIf((_, v) => v !== null && v !== '')
+    @Matches(/^PO\d+$/, { message: 'groupOrganeRef doit être un code d\'organe AN (ex. PO845401)' })
+    groupOrganeRef?: string | null;
 }
 
 const LINK_FIELDS: (keyof CandidateDto)[] = ['officialSiteUrl', 'officialProgramUrl', 'programStatus', 'programPublishedAt'];
@@ -71,7 +83,7 @@ const LINK_FIELDS: (keyof CandidateDto)[] = ['officialSiteUrl', 'officialProgram
  */
 export function prepareCandidateUpdate(dto: CandidateDto, now: Date = new Date()): Record<string, unknown> {
     const data: Record<string, unknown> = { ...dto };
-    for (const key of ['officialSiteUrl', 'officialProgramUrl', 'programPublishedAt'] as const) {
+    for (const key of ['officialSiteUrl', 'officialProgramUrl', 'programPublishedAt', 'deputyId', 'groupOrganeRef'] as const) {
         if (data[key] === '') data[key] = null;
     }
     if (data.officialProgramUrl && !data.programStatus) {

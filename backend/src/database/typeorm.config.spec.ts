@@ -39,7 +39,7 @@ describe('buildTypeOrmOptions', () => {
     it('registers every entity and a migrations glob that excludes .d.ts files', () => {
         const options = buildTypeOrmOptions({}) as any;
         expect(options.entities).toBe(ENTITIES);
-        expect(ENTITIES.length).toBe(18);
+        expect(ENTITIES.length).toBe(19);
         expect(options.migrations[0]).toMatch(/migrations[/\\]\*\.ts$/);
         expect(options.migrationsTableName).toBe('typeorm_migrations');
     });

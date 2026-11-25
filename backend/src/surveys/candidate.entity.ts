@@ -62,6 +62,14 @@ export class Candidate {
     @Column({ type: 'date', nullable: true })
     programPublishedAt: string | null;
 
+    /** Député (actuel ou ancien) correspondant au candidat : ses votes sont ses positions personnelles */
+    @Column({ type: 'uuid', nullable: true })
+    deputyId: string | null;
+
+    /** Groupe AN (organeRef, ex. « PO845401 ») de la formation du candidat, utilisé comme indicateur */
+    @Column({ type: 'varchar', nullable: true })
+    groupOrganeRef: string | null;
+
     /** Dernière vérification manuelle des liens officiels */
     @Column({ type: 'timestamp', nullable: true })
     linksCheckedAt: Date | null;

@@ -8,6 +8,7 @@ import '../theme/app_colors.dart';
 import '../services/api_client.dart';
 import '../widgets/auth_prompt_modal.dart';
 import '../widgets/candidate_links.dart';
+import '../widgets/candidate_positions.dart';
 
 class SurveysScreen extends StatefulWidget {
   const SurveysScreen({Key? key}) : super(key: key);
@@ -715,6 +716,9 @@ class _SurveysScreenState extends State<SurveysScreen> {
 
                       // Programme officiel, site de campagne et fiche de synthèse
                       CandidateLinks(candidate: candidate),
+
+                      // Positions sourcées du candidat sur les lois
+                      CandidateLawPositionsList(candidateId: candidate.id),
 
                       const SizedBox(height: 16),
 

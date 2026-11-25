@@ -18,13 +18,14 @@ import { Report } from '../reports/entities/report.entity';
 import { SurveyRegistry } from '../surveys/survey-registry.entity';
 import { SurveyUrna } from '../surveys/survey-urna.entity';
 import { GroupVote } from '../votes/group-vote.entity';
+import { CandidateLawPosition } from '../surveys/candidate-law-position.entity';
 
 export const ENTITIES = [
     Law, LawFavorite, User, Citizen,
     VoteRegistry, VoteUrna, Deputy, OfficialVote,
     CitizenLevel, Category, Amendement, Candidate,
     PresidentialVote, TopicPoll,
-    Report, SurveyRegistry, SurveyUrna, GroupVote,
+    Report, SurveyRegistry, SurveyUrna, GroupVote, CandidateLawPosition,
 ];
 
 /**

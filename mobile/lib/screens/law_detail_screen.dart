@@ -16,6 +16,7 @@ import '../widgets/report_error_dialog.dart';
 import '../widgets/law_deep_dive_dialog.dart';
 import '../widgets/auth_prompt_modal.dart';
 import '../widgets/group_votes_section.dart';
+import '../widgets/candidate_positions.dart';
 
 class LawDetailScreen extends StatelessWidget {
   final Law law;
@@ -396,6 +397,7 @@ class _LawDetailScreenContentState extends State<_LawDetailScreenContent> {
                             _buildDeputyVoteResultSection(widget.law.deputyVoteResult!),
                             const SizedBox(height: 16),
                             GroupVotesSection(lawId: widget.law.id),
+                            CandidatePositionsSection(lawId: widget.law.id),
                           ],
                         ] else if (widget.law.lawStatus == LawStatus.votedAn || 
                                    widget.law.lawStatus == LawStatus.validated || 
