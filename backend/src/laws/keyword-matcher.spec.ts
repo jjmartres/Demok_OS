@@ -57,7 +57,10 @@ describe('categorization of real law titles', () => {
     it.each([
         ['Projet de loi de finances pour 2026', 'finances'],
         ['Projet de loi de financement de la sécurité sociale pour 2026', 'social_sante'],
-        ["Proposition de loi relative au droit à l'aide à mourir", 'social_sante'],
+        ["Proposition de loi relative au droit à l'aide à mourir", 'societe_vie'],
+        ['Projet de loi de simplification de la vie économique', 'economie'],
+        ['Proposition de loi visant à protéger les mineurs sur les réseaux sociaux', 'numerique'],
+        ["Projet de loi pour contrôler l'immigration et améliorer l'intégration", 'immigration'],
         ['Projet de loi relatif à la programmation militaire pour les années 2024 à 2030', 'securite'],
         ['Proposition de loi visant à sortir la France du piège du narcotrafic', 'securite'],
         ["Projet de loi d'orientation pour la souveraineté alimentaire et agricole", 'agriculture'],

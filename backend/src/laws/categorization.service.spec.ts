@@ -14,7 +14,7 @@ describe('CategorizationService', () => {
     let service: CategorizationService;
 
     beforeEach(() => {
-        const qb = { leftJoin: jest.fn().mockReturnThis(), where: jest.fn().mockReturnThis(), getMany: jest.fn() };
+        const qb = { leftJoin: jest.fn().mockReturnThis(), where: jest.fn().mockReturnThis(), andWhere: jest.fn().mockReturnThis(), getMany: jest.fn() };
         lawRepository = { save: jest.fn(async (l) => l), createQueryBuilder: jest.fn(() => qb), qb };
         service = new CategorizationService({ find: jest.fn().mockResolvedValue(categories) } as any, lawRepository);
     });

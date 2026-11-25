@@ -28,7 +28,7 @@ export class CategoriesSeedService implements OnModuleInit {
             slug: 'social_sante',
             color: '#FF6B6B',
             icon: '🏥',
-            keywords: 'sécurité sociale,financement de la sécurité sociale,santé,santé publique,hôpital,hôpitaux,assurance maladie,médecin,médecins,soins,patients,médicament,médicaments,handicap,dépendance,autonomie,famille,enfance,allocations,CAF,CPAM,solidarité,fin de vie,aide à mourir,soins palliatifs,bioéthique,EHPAD,maladie',
+            keywords: 'sécurité sociale,financement de la sécurité sociale,santé,santé publique,hôpital,hôpitaux,assurance maladie,médecin,médecins,soins,soins palliatifs,patients,médicament,médicaments,handicap,dépendance,autonomie,allocations,CAF,CPAM,solidarité,EHPAD,maladie',
         },
         {
             name: 'Travail',
@@ -49,7 +49,7 @@ export class CategoriesSeedService implements OnModuleInit {
             slug: 'justice',
             color: '#8B4513',
             icon: '⚖️',
-            keywords: 'justice,justice pénale,droit pénal,code pénal,droit civil,code civil,tribunal,tribunaux,juge,juges,magistrats,procédure pénale,procédure judiciaire,prison,prisons,détenus,pénitentiaire,peine,peines,condamnation,avocat,avocats,procès,RGPD,données personnelles,libertés publiques',
+            keywords: 'justice,justice pénale,droit pénal,code pénal,droit civil,code civil,tribunal,tribunaux,juge,juges,magistrats,procédure pénale,procédure judiciaire,prison,prisons,détenus,pénitentiaire,peine,peines,condamnation,avocat,avocats,procès,libertés publiques',
         },
         {
             name: 'Sécurité',
@@ -92,6 +92,34 @@ export class CategoriesSeedService implements OnModuleInit {
             color: '#3498DB',
             icon: '🌍',
             keywords: 'relations internationales,affaires étrangères,Union européenne,européen,européenne,Europe,diplomatie,diplomatique,coopération internationale,francophonie,traité,traités,accord international,convention internationale,ratification,UE,ONU,OTAN',
+        },
+        {
+            name: 'Économie & entreprises',
+            slug: 'economie',
+            color: '#F97316',
+            icon: '🏭',
+            keywords: 'économie,économique,vie économique,simplification de la vie économique,entreprise,entreprises,PME,TPE,start-up,industrie,industriel,commerce,commerçants,artisanat,artisans,consommation,consommateurs,concurrence,pouvoir d\'achat,banque,banques,assurance,assurances,croissance,attractivité,souveraineté économique',
+        },
+        {
+            name: 'Société & vie quotidienne',
+            slug: 'societe_vie',
+            color: '#EC4899',
+            icon: '🏠',
+            keywords: 'famille,familles,enfance,enfants,parents,mariage,divorce,fin de vie,aide à mourir,soins palliatifs,bioéthique,PMA,adoption,égalité femmes-hommes,égalité entre les femmes et les hommes,violences conjugales,violences faites aux femmes,discriminations,laïcité,associations,vie associative,jeunesse,animaux de compagnie',
+        },
+        {
+            name: 'Numérique',
+            slug: 'numerique',
+            color: '#06B6D4',
+            icon: '💻',
+            keywords: 'numérique,numériques,internet,plateformes,plateformes en ligne,réseaux sociaux,intelligence artificielle,données personnelles,RGPD,protection des données,cloud,télécommunications,fibre,5G,espace numérique,contenus en ligne,cyberharcèlement,écrans',
+        },
+        {
+            name: 'Immigration & nationalité',
+            slug: 'immigration',
+            color: '#8B5CF6',
+            icon: '🛂',
+            keywords: 'immigration,immigrés,étrangers,étranger,asile,droit d\'asile,demandeurs d\'asile,titre de séjour,titres de séjour,séjour des étrangers,nationalité,naturalisation,intégration,expulsion,éloignement,OQTF,regroupement familial,frontières,contrôle aux frontières,migrants,migratoire',
         },
         {
             name: 'Institutions',
